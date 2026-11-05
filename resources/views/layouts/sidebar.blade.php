@@ -9,7 +9,7 @@
             || request()->is('verifikasi/awal*') 
             || request()->is('akademik/monitoring*');
 
-    $role = $isMahasiswa ? 'mahasiswa' : ($isDosen ? 'dosen' : 'admin');
+    $role = auth()->user()?->role ?? ($isMahasiswa ? 'mahasiswa' : ($isDosen ? 'dosen' : 'admin'));
 @endphp
 
 <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 h-full">
@@ -91,7 +91,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     <span>Tracer Study</span>
                 </a>
-                <a href="{{ route('announcements.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('announcements.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
+                <a href="{{ route('announcements.manage') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('announcements.manage', 'announcements.create', 'announcements.edit') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
                     <span>Kelola Pengumuman</span>
                 </a>
@@ -111,15 +111,18 @@
             </div>
             <div class="truncate">
                 <p class="text-xs font-bold text-slate-800 truncate">
-                    {{ $role === 'mahasiswa' ? 'M. Surya Gymnastyar' : ($role === 'dosen' ? 'Dr. Kurniawan, M.Cs.' : 'Subbag Kemahasiswaan') }}
+                    {{ auth()->user()?->name ?? ($role === 'mahasiswa' ? 'Mahasiswa' : ($role === 'dosen' ? 'Dosen PA' : 'Subbag Kemahasiswaan')) }}
                 </p>
                 <p class="text-[10px] text-slate-400 font-medium truncate">
-                    {{ $role === 'mahasiswa' ? '2417051011 · S1 Ilmu Komputer' : ($role === 'dosen' ? 'Dosen PA Ilmu Komputer' : 'Admin Fakultas MIPA') }}
+                    {{ auth()->user()?->nim_nip ? auth()->user()->nim_nip.' · '.(auth()->user()->major ?? '') : ($role === 'mahasiswa' ? 'Mahasiswa' : ($role === 'dosen' ? 'Dosen PA' : 'Admin Fakultas MIPA')) }}
                 </p>
             </div>
         </div>
-        <a href="{{ url('/') }}" title="Keluar Portal" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-slate-50 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-        </a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" title="Keluar Portal" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </button>
+        </form>
     </div>
 </aside>
