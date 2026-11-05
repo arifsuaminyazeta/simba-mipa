@@ -5,47 +5,58 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Illuminate\Validation\Rule;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
-    public function create(): View
+    public function create()
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws ValidationException
-     */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'nim_nip' => ['required', 'string', 'max:30', 'unique:users,nim_nip'],
+            'email' => ['required', 'email', 'lowercase', 'max:255', 'unique:users,email'],
+            'major' => [
+                'required',
+                Rule::in([
+                    'Ilmu Komputer',
+                    'Matematika',
+                    'Fisika',
+                    'Kimia',
+                    'Biologi'
+                ])
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'nim_nip.unique' => 'NIM sudah terdaftar.',
+            'email.unique' => 'Email sudah digunakan.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'nim_nip' => $request->nim_nip,
             'email' => $request->email,
+            'major' => $request->major,
             'password' => Hash::make($request->password),
+            'role' => 'mahasiswa',
+            'academic_status' => 'aktif',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        $request->session()->regenerate();
+
+        return redirect()->route('demo.dashboard.mahasiswa');
     }
 }

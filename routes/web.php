@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ScholarshipController;
+use App\Http\Controllers\ScholarshipApplicationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,14 +28,35 @@ Route::prefix('demo')->name('demo.')->group(function () {
         Route::get('/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa');
     });
 
-    // Beasiswa
+   Route::prefix('demo')->name('demo.')->group(function () {
+
     Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
-        Route::get('/', fn() => view('beasiswa.index'))->name('index');
-        Route::get('/katalog', fn() => view('beasiswa.katalog'))->name('katalog');
-        Route::get('/create', fn() => view('beasiswa.create'))->name('create');
-        Route::get('/edit', fn() => view('beasiswa.edit'))->name('edit');
-        Route::get('/show', fn() => view('beasiswa.show'))->name('show');
+
+        Route::get('/', [ScholarshipController::class, 'index'])->name('index');
+        Route::get('/create', [ScholarshipController::class, 'create'])->name('create');
+        Route::post('/', [ScholarshipController::class, 'store'])->name('store');
+
+        Route::get('/{scholarship}/edit', [ScholarshipController::class, 'edit'])->name('edit');
+        Route::get('/{scholarship}', [ScholarshipController::class, 'show'])->name('show');
+
+        Route::put('/{scholarship}', [ScholarshipController::class, 'update'])->name('update');
+        Route::delete('/{scholarship}', [ScholarshipController::class, 'destroy'])->name('destroy');
+
     });
+
+    Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
+
+        Route::get('/awal', [ScholarshipApplicationController::class, 'dosenIndex'])->name('awal');
+        Route::get('/akhir', [ScholarshipApplicationController::class, 'adminIndex'])->name('akhir');
+
+        Route::get('/detail/{application}', [ScholarshipApplicationController::class, 'show'])->name('detail');
+
+        Route::post('/{application}/dosen', [ScholarshipApplicationController::class, 'verifyByDosen'])->name('dosen');
+        Route::post('/{application}/admin', [ScholarshipApplicationController::class, 'verifyByAdmin'])->name('admin');
+
+    });
+
+});
 
     // Pendaftaran 
     Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
@@ -75,6 +98,7 @@ Route::prefix('demo')->name('demo.')->group(function () {
         Route::get('/', fn() => view('users.index'))->name('index');
         Route::get('/create', fn() => view('users.create'))->name('create');
     });
+    
 });
 
 require __DIR__.'/auth.php';
