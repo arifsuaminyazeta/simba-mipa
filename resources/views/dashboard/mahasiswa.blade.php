@@ -7,7 +7,7 @@
     <!-- Header Sambutan -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Halo, {{ auth()->user()->name }}!</h1>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Halo, Surya! 👋</h1>
             <p class="text-xs text-slate-500 mt-1">Selamat datang di portal SIMBA-MIPA. Pantau status beasiswa dan pengajuan Anda.</p>
         </div>
         <div class="flex items-center gap-2">
@@ -51,7 +51,7 @@
 
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
             <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Dosen PA</p>
-            <h3 class="text-sm font-bold text-slate-800 mt-1">{{ auth()->user()->academicAdvisor?->name ?? 'Belum ditentukan' }}</h3>
+            <h3 class="text-sm font-bold text-slate-800 mt-1">Dr. Kurniawan, M.Cs.</h3>
             <p class="text-[11px] text-slate-400 font-medium mt-1">Jurusan Ilmu Komputer</p>
         </div>
 
@@ -97,7 +97,7 @@
                         <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">✓</div>
                         <div>
                             <p class="text-xs font-bold text-slate-800">2. Verifikasi Dosen PA</p>
-                            <p class="text-[11px] text-slate-400">Disetujui oleh {{ auth()->user()->academicAdvisor?->name ?? 'Dosen PA' }}</p>
+                            <p class="text-[11px] text-slate-400">Disetujui oleh Dr. Kurniawan</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
