@@ -11,6 +11,8 @@ class AlumniTracerController extends Controller
 {
     public function index(Request $request)
     {
+        abort_unless($request->user()?->role === 'admin', 403);
+
         $filters = $this->validatedFilters($request);
         $tracers = $this->filteredQuery($filters)
             ->with('user')
@@ -107,6 +109,8 @@ class AlumniTracerController extends Controller
 
     public function export(Request $request)
     {
+        abort_unless($request->user()?->role === 'admin', 403);
+
         $query = $this->filteredQuery($this->validatedFilters($request))->with('user');
 
         return response()->streamDownload(function () use ($query): void {

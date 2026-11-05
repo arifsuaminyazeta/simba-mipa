@@ -44,13 +44,13 @@
                 <a href="{{ url('/') }}" class="hover:text-blue-600 transition-colors {{ request()->is('/') ? 'text-blue-600' : '' }}">
                     Beranda
                 </a>
-                <a href="{{ route('beasiswa.katalog') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('beasiswa.katalog', 'demo.beasiswa.katalog') ? 'text-blue-600' : '' }}">
+                <a href="{{ route('beasiswa.katalog') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('beasiswa.katalog') ? 'text-blue-600' : '' }}">
                     Katalog Beasiswa
                 </a>
-                <a href="{{ route('announcements.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('announcements.index') ? 'text-blue-600' : '' }}">
+                <a href="{{ route('announcements.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('announcements.*') ? 'text-blue-600' : '' }}">
                     Pengumuman
                 </a>
-                <a href="{{ route('tracer.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('tracer.*', 'demo.tracer.*') ? 'text-blue-600' : '' }}">
+                <a href="{{ route('tracer.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('tracer.*') ? 'text-blue-600' : '' }}">
                     Tracer Alumni
                 </a>
             </nav>

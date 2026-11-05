@@ -3,6 +3,8 @@
 use App\Http\Controllers\AlumniTracerController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ScholarshipApplicationController;
+use App\Http\Controllers\ScholarshipController;
 use App\Http\Controllers\UserController;
 use App\Models\Scholarship;
 use App\Models\SemesterEvaluation;
@@ -10,9 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn() => view('welcome'));
 
 Route::get('/dashboard', function (Request $request) {
     return match ($request->user()->role) {
@@ -68,67 +68,56 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
-    Route::get('/', function () {
-        $scholarships = Scholarship::latest()->paginate(10);
-
-        return view('beasiswa.index', compact('scholarships'));
-    })->name('index');
-
     Route::get('/katalog', function () {
         $scholarships = Scholarship::latest()->paginate(10);
 
         return view('beasiswa.katalog', compact('scholarships'));
     })->name('katalog');
+    Route::get('/show/{scholarship?}', [ScholarshipController::class, 'show'])->name('show');
 
-    Route::get('/create', fn() => view('beasiswa.create'))->name('create');
-    Route::get('/edit', fn() => view('beasiswa.edit'))->name('edit');
-    Route::get('/show', fn() => view('beasiswa.show'))->name('show');
+    Route::middleware('auth')->group(function () {
+        Route::get('/', [ScholarshipController::class, 'index'])->name('index');
+        Route::get('/create', [ScholarshipController::class, 'create'])->name('create');
+        Route::post('/', [ScholarshipController::class, 'store'])->name('store');
+        Route::get('/{scholarship}/edit', [ScholarshipController::class, 'edit'])->name('edit');
+        Route::put('/{scholarship}', [ScholarshipController::class, 'update'])->name('update');
+        Route::delete('/{scholarship}', [ScholarshipController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
-    Route::get('/', fn() => view('pendaftaran.index'))->name('index');
-    Route::get('/form', fn() => view('pendaftaran.create'))->name('create');
-    Route::get('/show', fn() => view('pendaftaran.show'))->name('show');
-    Route::get('/upload-sk', fn() => view('pendaftaran.upload'))->name('upload');
+    Route::middleware('auth')->group(function () {
+        Route::get('/', fn() => view('pendaftaran.index'))->name('index');
+        Route::get('/form', fn() => view('pendaftaran.create'))->name('create');
+        Route::get('/show', fn() => view('pendaftaran.show'))->name('show');
+        Route::get('/upload-sk', fn() => view('pendaftaran.upload'))->name('upload');
+    });
 });
 
-Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
-    Route::get('/awal', function () {
-        $applications = \App\Models\ScholarshipApplication::with(['user', 'scholarship'])
-            ->where('status', 'pending')
-            ->latest()
-            ->paginate(10);
-        $countPending = \App\Models\ScholarshipApplication::where('status', 'pending')->count();
-        $countApproved = \App\Models\ScholarshipApplication::where('status', 'verified_by_dosen')->count();
-        $countRejected = \App\Models\ScholarshipApplication::where('status', 'rejected_by_dosen')->count();
-
-        return view('verifikasi.awal', compact('applications', 'countPending', 'countApproved', 'countRejected'));
-    })->name('awal');
-
-    Route::get('/akhir', function () {
-        $applications = \App\Models\ScholarshipApplication::with(['user', 'scholarship'])
-            ->where('status', 'verified_by_dosen')
-            ->latest()
-            ->paginate(10);
-        $countPending = \App\Models\ScholarshipApplication::where('status', 'verified_by_dosen')->count();
-        $countApproved = \App\Models\ScholarshipApplication::where('status', 'approved_by_admin')->count();
-        $countRejected = \App\Models\ScholarshipApplication::where('status', 'rejected_by_admin')->count();
-
-        return view('verifikasi.akhir', compact('applications', 'countPending', 'countApproved', 'countRejected'));
-    })->name('akhir');
-
-    Route::get('/detail/{application}', function (int $application) {
-        $application = \App\Models\ScholarshipApplication::with(['user', 'scholarship'])->findOrFail($application);
-
-        return view('verifikasi.detail', compact('application'));
-    })->name('detail');
+Route::prefix('verifikasi')->name('verifikasi.')->middleware('auth')->group(function () {
+    Route::get('/awal', [ScholarshipApplicationController::class, 'dosenIndex'])->name('awal');
+    Route::get('/akhir', [ScholarshipApplicationController::class, 'adminIndex'])->name('akhir');
+    Route::get('/detail/{application}', [ScholarshipApplicationController::class, 'show'])->name('detail');
+    Route::post('/{application}/dosen', [ScholarshipApplicationController::class, 'verifyByDosen'])->name('dosen');
+    Route::post('/{application}/admin', [ScholarshipApplicationController::class, 'verifyByAdmin'])->name('admin');
 });
 
-Route::prefix('akademik')->name('akademik.')->group(function () {
-    Route::get('/monitoring', fn() => view('akademik.monitoring-khs'))->name('monitoring');
-    Route::get('/upload-khs', fn() => view('akademik.upload-khs'))->name('upload');
+Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function () {
+    Route::get('/monitoring', function (Request $request) {
+        abort_unless($request->user()->role === 'dosen', 403);
+
+        return view('akademik.monitoring-khs');
+    })->name('monitoring');
+
+    Route::get('/upload-khs', function (Request $request) {
+        abort_unless($request->user()->role === 'mahasiswa', 403);
+
+        return view('akademik.upload-khs');
+    })->name('upload');
 
     Route::get('/evaluasi', function (Request $request) {
+        abort_unless($request->user()->role === 'admin', 403);
+
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', Rule::in(['pending', 'verified', 'warning', 'revoked'])],
@@ -181,9 +170,15 @@ Route::prefix('akademik')->name('akademik.')->group(function () {
 
 Route::prefix('tracer')->name('tracer.')->group(function () {
     Route::get('/', fn() => view('tracer.index'))->name('index');
-    Route::get('/form', fn() => view('tracer.form'))->name('form');
-    Route::get('/rekap/export', [AlumniTracerController::class, 'export'])->name('rekap.export');
-    Route::get('/rekap', [AlumniTracerController::class, 'index'])->name('rekap');
+    Route::get('/form', function (Request $request) {
+        abort_unless($request->user()->role === 'mahasiswa', 403);
+
+        return view('tracer.form');
+    })->middleware('auth')->name('form');
+    Route::middleware('auth')->group(function () {
+        Route::get('/rekap/export', [AlumniTracerController::class, 'export'])->name('rekap.export');
+        Route::get('/rekap', [AlumniTracerController::class, 'index'])->name('rekap');
+    });
 });
 
 Route::prefix('announcements')->name('announcements.')->group(function () {

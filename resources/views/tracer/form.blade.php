@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('title', 'Kuesioner Tracer Alumni Beasiswa')
 
 @section('content')
