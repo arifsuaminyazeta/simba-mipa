@@ -69,7 +69,7 @@
                 <h2 class="text-sm font-bold text-slate-800">Status Pengajuan Beasiswa Anda</h2>
                 <p class="text-xs text-slate-400">Tahapan verifikasi berkas oleh Dosen Pembimbing Akademik dan Subbag Kemahasiswaan.</p>
             </div>
-            <a href="{{ route('demo.beasiswa.katalog') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">+ Daftar Beasiswa Baru</a>
+            <a href="{{ route('mahasiswa.beasiswa.katalog') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">+ Daftar Beasiswa Baru</a>
         </div>
         <div class="p-6">
             <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50/50">

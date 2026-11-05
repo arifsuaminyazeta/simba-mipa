@@ -76,7 +76,7 @@
                 <h2 class="text-sm font-bold text-slate-800">Menunggu Verifikasi Akhir (Subbag)</h2>
                 <p class="text-xs text-slate-400">Berkas yang sudah lolos seleksi awal dari Dosen Pembimbing Akademik.</p>
             </div>
-            <a href="{{ route('demo.verifikasi.akhir') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Lihat Semua &rarr;</a>
+            <a href="{{ route('verifikasi.akhir') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Lihat Semua &rarr;</a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
@@ -103,7 +103,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('demo.verifikasi.detail') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
+                            <a href="{{ route('verifikasi.akhir') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
                         </td>
                     </tr>
                     <tr class="hover:bg-slate-50/60 transition-colors">
@@ -119,7 +119,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('demo.verifikasi.detail') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
+                            <a href="{{ route('verifikasi.akhir') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
                         </td>
                     </tr>
                 </tbody>
