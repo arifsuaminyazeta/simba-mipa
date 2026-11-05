@@ -62,7 +62,7 @@
                     </p>
                 </div>
                 <div class="shrink-0 flex items-center gap-2">
-                    <a href="{{ route('demo.akademik.upload') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-semibold transition-all">
+                    <a href="{{ route('akademik.upload') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-600 hover:text-white text-xs font-semibold transition-all">
                         <span>Unggah KHS</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>

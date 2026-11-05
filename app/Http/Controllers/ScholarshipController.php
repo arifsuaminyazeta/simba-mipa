@@ -66,7 +66,7 @@ class ScholarshipController extends Controller
         Scholarship::create($data);
 
         return redirect()
-            ->route('demo.beasiswa.index')
+            ->route('beasiswa.index')
             ->with('success', 'Beasiswa berhasil ditambahkan.');
     }
 
@@ -113,7 +113,7 @@ class ScholarshipController extends Controller
         $scholarship->update($data);
 
         return redirect()
-            ->route('demo.beasiswa.index')
+            ->route('beasiswa.index')
             ->with('success', 'Beasiswa berhasil diperbarui.');
     }
 

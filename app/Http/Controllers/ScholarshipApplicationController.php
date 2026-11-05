@@ -131,7 +131,7 @@ class ScholarshipApplicationController extends Controller
         ]);
 
         return redirect()
-            ->route('demo.verifikasi.awal')
+            ->route('verifikasi.awal')
             ->with('success', 'Verifikasi Dosen PA berhasil disimpan.');
     }
 
@@ -184,7 +184,7 @@ class ScholarshipApplicationController extends Controller
         }
 
         return redirect()
-            ->route('demo.verifikasi.akhir')
+            ->route('verifikasi.akhir')
             ->with('success', 'Keputusan Admin berhasil disimpan.');
     }
 }

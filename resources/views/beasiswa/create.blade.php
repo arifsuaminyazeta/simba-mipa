@@ -6,7 +6,7 @@
 <div class="max-w-4xl mx-auto space-y-6">
 
     <div>
-        <a href="{{ route('demo.beasiswa.index') }}" class="text-sm text-blue-600 font-medium">
+        <a href="{{ route('beasiswa.index') }}" class="text-sm text-blue-600 font-medium">
             ← Kembali ke Kelola Beasiswa
         </a>
 
@@ -14,7 +14,7 @@
         <p class="text-sm text-slate-500 mt-1">Masukkan informasi program beasiswa baru.</p>
     </div>
 
-    <form action="{{ route('demo.beasiswa.store') }}" method="POST"
+    <form action="{{ route('beasiswa.store') }}" method="POST"
           class="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 space-y-6">
 
         @csrf
@@ -88,7 +88,7 @@
 
         <div class="flex justify-end gap-3 pt-5 border-t border-slate-100">
 
-            <a href="{{ route('demo.beasiswa.index') }}"
+            <a href="{{ route('beasiswa.index') }}"
                class="px-5 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600">
                 Batal
             </a>

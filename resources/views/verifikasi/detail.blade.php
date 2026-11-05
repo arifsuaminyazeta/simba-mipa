@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
 
-    <a href="{{ auth()->user()->role == 'admin' ? route('demo.verifikasi.akhir') : route('demo.verifikasi.awal') }}"
+    <a href="{{ auth()->user()->role == 'admin' ? route('verifikasi.akhir') : route('verifikasi.awal') }}"
        class="text-sm text-blue-600 font-medium">
         ← Kembali ke Verifikasi
     </a>
@@ -133,7 +133,7 @@
             Berikan keputusan berdasarkan hasil pemeriksaan dokumen mahasiswa.
         </p>
 
-        <form action="{{ route('demo.verifikasi.dosen', $application->id) }}"
+        <form action="{{ route('verifikasi.dosen', $application->id) }}"
               method="POST" class="space-y-5">
 
             @csrf
@@ -188,7 +188,7 @@
             </p>
         </div>
 
-        <form action="{{ route('demo.verifikasi.admin', $application->id) }}"
+        <form action="{{ route('verifikasi.admin', $application->id) }}"
               method="POST" class="space-y-5">
 
             @csrf

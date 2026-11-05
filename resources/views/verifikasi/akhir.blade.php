@@ -107,7 +107,7 @@
                         </td>
 
                         <td class="px-3 py-4 text-center">
-                            <a href="{{ route('demo.verifikasi.detail', $item->id) }}"
+                            <a href="{{ route('verifikasi.detail', $item->id) }}"
                                class="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-semibold">
                                 Detail
                             </a>

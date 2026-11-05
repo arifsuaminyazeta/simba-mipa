@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ScholarshipController;
-use App\Http\Controllers\ScholarshipApplicationController;
+use App\Models\Scholarship;
+use App\Models\ScholarshipApplication;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,86 +20,143 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::prefix('demo')->name('demo.')->group(function () {
+// Dashboard 
+Route::prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/admin', fn() => view('dashboard.admin'))->name('admin');
+    Route::get('/dosen', fn() => view('dashboard.dosen'))->name('dosen');
+    Route::get('/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa');
+});
 
-    // Dashboard 
-    Route::prefix('dashboard')->name('dashboard.')->group(function () {
-        Route::get('/admin', fn() => view('dashboard.admin'))->name('admin');
-        Route::get('/dosen', fn() => view('dashboard.dosen'))->name('dosen');
-        Route::get('/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa');
-    });
+// Beasiswa
+Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
 
-   Route::prefix('demo')->name('demo.')->group(function () {
+    // Daftar Beasiswa
+    Route::get('/', function () {
+        $scholarships = Scholarship::latest()->paginate(10);
 
-    Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
+        return view('beasiswa.index', compact('scholarships'));
+    })->name('index');
 
-        Route::get('/', [ScholarshipController::class, 'index'])->name('index');
-        Route::get('/create', [ScholarshipController::class, 'create'])->name('create');
-        Route::post('/', [ScholarshipController::class, 'store'])->name('store');
+    // Katalog Beasiswa
+    Route::get('/katalog', function () {
+        $scholarships = Scholarship::latest()->paginate(10);
 
-        Route::get('/{scholarship}/edit', [ScholarshipController::class, 'edit'])->name('edit');
-        Route::get('/{scholarship}', [ScholarshipController::class, 'show'])->name('show');
+        return view('beasiswa.katalog', compact('scholarships'));
+    })->name('katalog');
 
-        Route::put('/{scholarship}', [ScholarshipController::class, 'update'])->name('update');
-        Route::delete('/{scholarship}', [ScholarshipController::class, 'destroy'])->name('destroy');
+    // Tambah Beasiswa
+    Route::get('/create', fn() => view('beasiswa.create'))
+        ->name('create');
 
-    });
+    // Edit Beasiswa
+    Route::get('/edit', fn() => view('beasiswa.edit'))
+        ->name('edit');
 
-    Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
+    // Detail Beasiswa
+    Route::get('/show', fn() => view('beasiswa.show'))
+        ->name('show');
+});
 
-        Route::get('/awal', [ScholarshipApplicationController::class, 'dosenIndex'])->name('awal');
-        Route::get('/akhir', [ScholarshipApplicationController::class, 'adminIndex'])->name('akhir');
+// Pendaftaran 
+Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
+    Route::get('/', fn() => view('pendaftaran.index'))->name('index');
+    Route::get('/form', fn() => view('pendaftaran.create'))->name('create');
+    Route::get('/show', fn() => view('pendaftaran.show'))->name('show');
+    Route::get('/upload-sk', fn() => view('pendaftaran.upload'))->name('upload');
+});
+/*
+|--------------------------------------------------------------------------
+| Verifikasi Berkas
+|--------------------------------------------------------------------------
+*/
 
-        Route::get('/detail/{application}', [ScholarshipApplicationController::class, 'show'])->name('detail');
+Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
 
-        Route::post('/{application}/dosen', [ScholarshipApplicationController::class, 'verifyByDosen'])->name('dosen');
-        Route::post('/{application}/admin', [ScholarshipApplicationController::class, 'verifyByAdmin'])->name('admin');
+    // Verifikasi Dosen PA
+    Route::get('/awal', function () {
 
-    });
+        $applications = \App\Models\ScholarshipApplication::with(['user', 'scholarship'])
+            ->where('status', 'pending')
+            ->latest()
+            ->paginate(10);
+
+        $countPending = \App\Models\ScholarshipApplication::where('status', 'pending')->count();
+
+        $countApproved = \App\Models\ScholarshipApplication::where('status', 'verified_by_dosen')->count();
+
+        $countRejected = \App\Models\ScholarshipApplication::where('status', 'rejected_by_dosen')->count();
+
+        return view('verifikasi.awal', compact(
+            'applications',
+            'countPending',
+            'countApproved',
+            'countRejected'
+        ));
+
+    })->name('awal');
+
+
+    // Verifikasi Admin
+    Route::get('/akhir', function () {
+
+        $applications = \App\Models\ScholarshipApplication::with(['user', 'scholarship'])
+            ->where('status', 'verified_by_dosen')
+            ->latest()
+            ->paginate(10);
+
+        // Statistik verifikasi admin
+        $countPending = \App\Models\ScholarshipApplication::where('status', 'verified_by_dosen')->count();
+
+        $countApproved = \App\Models\ScholarshipApplication::where('status', 'approved_by_admin')->count();
+
+        $countRejected = \App\Models\ScholarshipApplication::where('status', 'rejected_by_admin')->count();
+
+        return view('verifikasi.akhir', compact(
+            'applications',
+            'countPending',
+            'countApproved',
+            'countRejected'
+        ));
+
+    })->name('akhir');
+
+
+    // Detail Verifikasi
+    Route::get('/detail/{application}', function ($application) {
+
+        $application = \App\Models\ScholarshipApplication::with(['user', 'scholarship'])
+            ->findOrFail($application);
+
+        return view('verifikasi.detail', compact('application'));
+
+    })->name('detail');
 
 });
 
-    // Pendaftaran 
-    Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
-        Route::get('/', fn() => view('pendaftaran.index'))->name('index');
-        Route::get('/form', fn() => view('pendaftaran.create'))->name('create');
-        Route::get('/show', fn() => view('pendaftaran.show'))->name('show');
-        Route::get('/upload-sk', fn() => view('pendaftaran.upload'))->name('upload');
-    });
+// Akademik & EWS (Monitoring & Upload KHS)
+Route::prefix('akademik')->name('akademik.')->group(function () {
+    Route::get('/monitoring', fn() => view('akademik.monitoring-khs'))->name('monitoring');
+    Route::get('/upload-khs', fn() => view('akademik.upload-khs'))->name('upload');
+    Route::get('/evaluasi', fn() => view('akademik.evaluasi'))->name('evaluasi');
+});
 
-    // Verifikasi Berkas
-    Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
-        Route::get('/awal', fn() => view('verifikasi.awal'))->name('awal'); // Dosen PA
-        Route::get('/akhir', fn() => view('verifikasi.akhir'))->name('akhir'); // Admin
-        Route::get('/detail', fn() => view('verifikasi.detail'))->name('detail');
-    });
+// Tracer Study
+Route::prefix('tracer')->name('tracer.')->group(function () {
+    Route::get('/', fn() => view('tracer.index'))->name('index');        
+    Route::get('/form', fn() => view('tracer.form'))->name('form');       
+    Route::get('/rekap', fn() => view('tracer.rekap'))->name('rekap');   
+});
 
-    // Akademik & EWS (Monitoring & Upload KHS)
-    Route::prefix('akademik')->name('akademik.')->group(function () {
-        Route::get('/monitoring', fn() => view('akademik.monitoring-khs'))->name('monitoring');
-        Route::get('/upload-khs', fn() => view('akademik.upload-khs'))->name('upload');
-        Route::get('/evaluasi', fn() => view('akademik.evaluasi'))->name('evaluasi');
-    });
+// Pengumuman
+Route::prefix('announcements')->name('announcements.')->group(function () {
+    Route::get('/', fn() => view('announcements.index'))->name('index');
+    Route::get('/create', fn() => view('announcements.create'))->name('create');
+});
 
-    // Tracer Study
-    Route::prefix('tracer')->name('tracer.')->group(function () {
-        Route::get('/', fn() => view('tracer.index'))->name('index');        
-        Route::get('/form', fn() => view('tracer.form'))->name('form');       
-        Route::get('/rekap', fn() => view('tracer.rekap'))->name('rekap');   
-    });
-
-    // Pengumuman
-    Route::prefix('announcements')->name('announcements.')->group(function () {
-        Route::get('/', fn() => view('announcements.index'))->name('index');
-        Route::get('/create', fn() => view('announcements.create'))->name('create');
-    });
-
-    // Manajemen User
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', fn() => view('users.index'))->name('index');
-        Route::get('/create', fn() => view('users.create'))->name('create');
-    });
-    
+// Manajemen User
+Route::prefix('users')->name('users.')->group(function () {
+    Route::get('/', fn() => view('users.index'))->name('index');
+    Route::get('/create', fn() => view('users.create'))->name('create');
 });
 
 require __DIR__.'/auth.php';

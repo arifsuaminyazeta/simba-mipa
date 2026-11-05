@@ -57,6 +57,6 @@ class RegisteredUserController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('demo.dashboard.mahasiswa');
+        return redirect()->route('dashboard.mahasiswa');
     }
 }

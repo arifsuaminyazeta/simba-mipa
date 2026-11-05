@@ -11,7 +11,7 @@
             <p class="text-sm text-slate-500 mt-1">Kelola informasi, kuota, dan periode program beasiswa.</p>
         </div>
 
-        <a href="{{ route('demo.beasiswa.create') }}"
+        <a href="{{ route('beasiswa.create') }}"
            class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm">
             <span>+</span> Tambah Beasiswa
         </a>
@@ -53,7 +53,7 @@
 
     <div class="bg-white border border-slate-200 rounded-2xl p-5">
 
-        <form action="{{ route('demo.beasiswa.index') }}" method="GET"
+        <form action="{{ route('beasiswa.index') }}" method="GET"
               class="flex flex-col md:flex-row gap-3 mb-5">
 
             <input type="text" name="search"
@@ -136,17 +136,17 @@
                         <td class="py-4 px-3">
                             <div class="flex items-center justify-center gap-2">
 
-                                <a href="{{ route('demo.beasiswa.show', $item->id) }}"
+                                <a href="{{ route('beasiswa.show', $item->id) }}"
                                    class="px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-semibold">
                                     Detail
                                 </a>
 
-                                <a href="{{ route('demo.beasiswa.edit', $item->id) }}"
+                                <a href="{{ route('beasiswa.edit', $item->id) }}"
                                    class="px-3 py-2 bg-amber-50 text-amber-600 rounded-lg text-xs font-semibold">
                                     Edit
                                 </a>
 
-                                <form action="{{ route('demo.beasiswa.destroy', $item->id) }}"
+                                <form action="{{ route('beasiswa.destroy', $item->id) }}"
                                       method="POST"
                                       onsubmit="return confirm('Yakin ingin menghapus beasiswa ini?')">
                                     @csrf

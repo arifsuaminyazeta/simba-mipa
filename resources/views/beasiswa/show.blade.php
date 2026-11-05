@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
 
-    <a href="{{ route('demo.beasiswa.index') }}" class="text-sm text-blue-600 font-medium">
+    <a href="{{ route('beasiswa.index') }}" class="text-sm text-blue-600 font-medium">
         ← Kembali ke Kelola Beasiswa
     </a>
 
@@ -88,7 +88,7 @@
 
         <div class="mt-8 pt-6 border-t border-slate-100 flex justify-end">
 
-            <a href="{{ route('demo.beasiswa.edit', $scholarship->id) }}"
+            <a href="{{ route('beasiswa.edit', $scholarship->id) }}"
                class="px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-semibold">
                 Edit Beasiswa
             </a>
