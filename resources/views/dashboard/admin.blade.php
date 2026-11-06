@@ -99,7 +99,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('verifikasi.detail') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
+                            <a href="{{ route('verifikasi.akhir') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
                         </td>
                     </tr>
                     <tr class="hover:bg-slate-50/60 transition-colors">
@@ -115,7 +115,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('verifikasi.detail') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
+                            <a href="{{ route('verifikasi.akhir') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
                         </td>
                     </tr>
                 </tbody>
