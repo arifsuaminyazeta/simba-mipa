@@ -125,7 +125,7 @@
                         </td>
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span> 
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
                                 Tren Menurun
                             </span>
                         </td>

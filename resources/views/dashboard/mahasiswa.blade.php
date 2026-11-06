@@ -4,9 +4,10 @@
 
 @section('content')
 <div class="space-y-8">
+    <!-- Header Sambutan -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Halo, Surya!</h1>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Halo, Surya! 👋</h1>
             <p class="text-xs text-slate-500 mt-1">Selamat datang di portal SIMBA-MIPA. Pantau status beasiswa dan pengajuan Anda.</p>
         </div>
         <div class="flex items-center gap-2">
@@ -17,7 +18,7 @@
         </div>
     </div>
 
-    <!-- Alert Notifikasi -->
+    <!-- Alert Notifikasi Tindakan (KHS) -->
     <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-4">
         <div class="p-2 bg-blue-600 text-white rounded-xl shrink-0 mt-0.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -27,14 +28,14 @@
                 <h4 class="text-xs font-bold text-blue-900">Periode Evaluasi KHS Semester Genap 2026/2027</h4>
                 <p class="text-[11px] text-blue-700 mt-0.5">Harap unggah KHS terbaru sebelum batas akhir 20 November 2026 untuk monitoring Early Warning System (EWS).</p>
             </div>
-            <a href="{{ route('akademik.upload') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 shrink-0">
+            <a href="{{ route('mahasiswa.akademik.upload') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 shrink-0">
                 <span>Unggah Sekarang</span>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
         </div>
     </div>
 
-    <!-- Ringkasan Mahasiswa -->
+    <!-- Grid Ringkasan Mahasiswa -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
             <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Beasiswa Diterima</p>
@@ -50,7 +51,7 @@
 
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
             <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Dosen PA</p>
-            <h3 class="text-sm font-bold text-slate-800 mt-1">Muhammad Afdhaluddin, M.Kom.</h3>
+            <h3 class="text-sm font-bold text-slate-800 mt-1">Dr. Kurniawan, M.Cs.</h3>
             <p class="text-[11px] text-slate-400 font-medium mt-1">Jurusan Ilmu Komputer</p>
         </div>
 
@@ -61,13 +62,14 @@
         </div>
     </div>
 
-    <!-- Riwayat Pengajuan & Verifikasi -->
+    <!-- Riwayat Pengajuan & Verifikasi 2 Tingkat -->
     <div class="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
         <div class="p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
                 <h2 class="text-sm font-bold text-slate-800">Status Pengajuan Beasiswa Anda</h2>
                 <p class="text-xs text-slate-400">Tahapan verifikasi berkas oleh Dosen Pembimbing Akademik dan Subbag Kemahasiswaan.</p>
             </div>
+            <a href="{{ route('mahasiswa.beasiswa.katalog') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">+ Daftar Beasiswa Baru</a>
         </div>
         <div class="p-6">
             <div class="border border-slate-100 rounded-2xl p-5 bg-slate-50/50">

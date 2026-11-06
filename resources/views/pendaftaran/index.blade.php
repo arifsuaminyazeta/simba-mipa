@@ -10,7 +10,7 @@
             <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Status Pendaftaran Beasiswa</h1>
             <p class="text-xs text-slate-500 mt-1">Lacak tahapan verifikasi berkas, persetujuan Dosen PA, dan keputusan Subbag Kemahasiswaan FMIPA.</p>
         </div>
-        <a href="{{ route('pendaftaran.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-xs transition-all self-start sm:self-auto">
+        <a href="{{ route('mahasiswa.pendaftaran.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-xs transition-all self-start sm:self-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <span>Daftar Beasiswa Baru</span>
         </a>
@@ -130,7 +130,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('pendaftaran.show') }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-[11px] hover:bg-slate-50 transition-colors">
+                            <a href="{{ route('mahasiswa.pendaftaran.show') }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-[11px] hover:bg-slate-50 transition-colors">
                                 Lihat Berkas
                             </a>
                         </td>
@@ -150,7 +150,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('pendaftaran.show') }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-[11px] hover:bg-slate-50 transition-colors">
+                            <a href="{{ route('mahasiswa.pendaftaran.show') }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-[11px] hover:bg-slate-50 transition-colors">
                                 Arsip Berkas
                             </a>
                         </td>

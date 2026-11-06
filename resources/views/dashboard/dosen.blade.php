@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="space-y-8">
+    <!-- Header Sambutan -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
             <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Portal Dosen Pembimbing Akademik</h1>
@@ -53,14 +54,14 @@
         </div>
     </div>
 
-    <!-- Daftar Berkas Menunggu Verifikasi Dosen PA -->
+    <!-- Daftar Berkas Menunggu ACC Dosen PA -->
     <div class="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
         <div class="p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
                 <h2 class="text-sm font-bold text-slate-800">Pengajuan Rekomendasi Beasiswa Masuk</h2>
                 <p class="text-xs text-slate-400">Verifikasi kelayakan akademik sebelum diteruskan ke Subbag Kemahasiswaan FMIPA.</p>
             </div>
-            <a href="{{ route('verifikasi.awal') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Lihat Semua &rarr;</a>
+            <span class="text-xs font-semibold text-amber-600">3 Pengajuan Tertunda</span>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
@@ -70,46 +71,44 @@
                         <th class="px-6 py-3.5">Beasiswa yang Diajukan</th>
                         <th class="px-6 py-3.5">IPK Kumulatif</th>
                         <th class="px-6 py-3.5">Dokumen</th>
-                        <th class="px-6 py-3.5 text-right">Aksi</th>
+                        <th class="px-6 py-3.5 text-right">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                     <tr class="hover:bg-slate-50/60 transition-colors">
                         <td class="px-6 py-4">
                             <p class="font-bold text-slate-900">M. Surya Gymnastyar</p>
-                            <p class="text-[11px] text-slate-400">2417051011 · Semester 5</p>
+                            <p class="text-[11px] text-slate-400">2417051000 · Semester 5</p>
                         </td>
                         <td class="px-6 py-4 font-medium text-slate-800">Beasiswa Bank Indonesia</td>
                         <td class="px-6 py-4 font-bold text-emerald-600">3.96</td>
                         <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 text-[11px] text-blue-600 font-medium hover:underline cursor-pointer">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                KHS_Surya.pdf
+                            <span class="inline-flex items-center gap-1 text-[11px] text-blue-600 font-medium cursor-pointer hover:underline">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                                Transkrip_Surya.pdf
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-right">
-                            <a href="{{ route('verifikasi.awal') }}" class="inline-flex items-center justify-center px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[11px] transition-colors shadow-xs">
-                                Verifikasi
-                            </a>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <button type="button" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-medium text-[11px] hover:bg-emerald-700">Setujui</button>
+                            <button type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 font-medium text-[11px] hover:bg-slate-50">Tolak</button>
                         </td>
                     </tr>
                     <tr class="hover:bg-slate-50/60 transition-colors">
                         <td class="px-6 py-4">
-                            <p class="font-bold text-slate-900">Zahira Adiah Safa</p>
-                            <p class="text-[11px] text-slate-400">2417051012 · Semester 5</p>
+                            <p class="font-bold text-slate-900">Fajar Pratama</p>
+                            <p class="text-[11px] text-slate-400">2317051042 · Semester 5</p>
                         </td>
                         <td class="px-6 py-4 font-medium text-slate-800">Djarum Beasiswa Plus</td>
-                        <td class="px-6 py-4 font-bold text-blue-600">3.82</td>
+                        <td class="px-6 py-4 font-bold text-blue-600">3.40</td>
                         <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 text-[11px] text-blue-600 font-medium hover:underline cursor-pointer">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                KHS_Zahira.pdf
+                            <span class="inline-flex items-center gap-1 text-[11px] text-blue-600 font-medium cursor-pointer hover:underline">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                                Transkrip_Fajar.pdf
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-right">
-                            <a href="{{ route('verifikasi.awal') }}" class="inline-flex items-center justify-center px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[11px] transition-colors shadow-xs">
-                                Verifikasi
-                            </a>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <button type="button" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-medium text-[11px] hover:bg-emerald-700">Setujui</button>
+                            <button type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 font-medium text-[11px] hover:bg-slate-50">Tolak</button>
                         </td>
                     </tr>
                 </tbody>

@@ -44,13 +44,13 @@
                 <a href="{{ url('/') }}" class="hover:text-blue-600 transition-colors {{ request()->is('/') ? 'text-blue-600' : '' }}">
                     Beranda
                 </a>
-                <a href="{{ route('beasiswa.katalog') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('beasiswa.katalog') ? 'text-blue-600' : '' }}">
+                <a href="{{ route('beasiswa.katalog') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('beasiswa.katalog', 'mahasiswa.beasiswa.katalog', 'demo.beasiswa.katalog') ? 'text-blue-600' : '' }}">
                     Katalog Beasiswa
                 </a>
-                <a href="{{ route('announcements.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('announcements.*') ? 'text-blue-600' : '' }}">
+                <a href="{{ route('announcements.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('announcements.index', 'demo.announcements.index') ? 'text-blue-600' : '' }}">
                     Pengumuman
                 </a>
-                <a href="{{ route('tracer.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('tracer.*') ? 'text-blue-600' : '' }}">
+                <a href="{{ route('tracer.index') }}" class="hover:text-blue-600 transition-colors {{ request()->routeIs('tracer.*', 'demo.tracer.*') ? 'text-blue-600' : '' }}">
                     Tracer Alumni
                 </a>
             </nav>
@@ -58,12 +58,18 @@
             <!-- Tombol Masuk -->
             <div class="flex items-center gap-3">
                 @auth
-                    <a href="{{ route('dashboard.mahasiswa') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-xs transition-all">
+                    <a href="{{ route(auth()->user()->role === 'admin' ? 'dashboard.admin' : (auth()->user()->role === 'dosen' ? 'dashboard.dosen' : 'dashboard.mahasiswa')) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-xs transition-all">
                         <span>Dashboard</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                         </svg>
                     </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-all">
+                            Keluar
+                        </button>
+                    </form>
                 @else
                     <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold hover:bg-blue-600 hover:text-white transition-all">
                         <span>Masuk Portal</span>

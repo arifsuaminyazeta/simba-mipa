@@ -17,9 +17,9 @@
         </div>
     </div>
 
-    <!-- Statistik Utama -->
+    <!-- Metrik Statistik Utama -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
+        <!-- Card 1 -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Pendaftar</p>
@@ -31,6 +31,7 @@
             </div>
         </div>
 
+        <!-- Card 2 -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Verifikasi Akhir</p>
@@ -42,6 +43,7 @@
             </div>
         </div>
 
+        <!-- Card 3 -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Peringatan EWS</p>
@@ -53,6 +55,7 @@
             </div>
         </div>
 
+        <!-- Card 4 -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Awardee Aktif</p>
@@ -65,7 +68,7 @@
         </div>
     </div>
 
-    <!-- Tabel Verifikasi -->
+    <!-- Tabel Verifikasi Cepat -->
     <div class="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
         <div class="p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
@@ -99,7 +102,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('verifikasi.detail') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
+                            <a href="{{ route('verifikasi.akhir') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
                         </td>
                     </tr>
                     <tr class="hover:bg-slate-50/60 transition-colors">
@@ -115,7 +118,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('verifikasi.detail') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
+                            <a href="{{ route('verifikasi.akhir') }}" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium text-[11px] hover:bg-blue-700">Periksa</a>
                         </td>
                     </tr>
                 </tbody>

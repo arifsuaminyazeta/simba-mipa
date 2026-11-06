@@ -8,7 +8,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
             <div class="flex items-center gap-2 mb-1">
-                <a href="{{ route('pendaftaran.index') }}" class="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                <a href="{{ route('mahasiswa.pendaftaran.index') }}" class="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     Kembali ke Status Pendaftaran
                 </a>
@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <form action="{{ route('pendaftaran.index') }}" method="GET" class="space-y-6">
+    <form action="{{ route('mahasiswa.pendaftaran.index') }}" method="GET" class="space-y-6">
         <!-- 1. Bagian Identitas Akademik Terverifikasi (Readonly) -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
             <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-5">
