@@ -42,7 +42,7 @@
     <!-- Form Unggah KHS Semester Berjalan -->
     <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
         <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-6">
-            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
             </div>
             <div>
@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <form action="{{ route('mahasiswa.akademik.upload') }}" method="GET" class="space-y-5">
+        <form action="{{ route('akademik.upload') }}" method="GET" class="space-y-5">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-700 mb-1.5">Pilih Semester Dilaporkan <span class="text-rose-500">*</span></label>

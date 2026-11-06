@@ -19,7 +19,7 @@
         <!-- 1. Data Riwayat Kelulusan -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
             <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-5">
-                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
                     01
                 </div>
                 <div>
@@ -56,7 +56,7 @@
         <!-- 2. Profil Pekerjaan & Instansi -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
             <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-5">
-                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
                     02
                 </div>
                 <div>
@@ -84,7 +84,7 @@
         <!-- 3. Tautan Media Sosial & Kontak Publik -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
             <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-5">
-                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
                     03
                 </div>
                 <div>
