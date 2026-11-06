@@ -1,5 +1,5 @@
-@extends(request()->is('beasiswa*') ? 'layouts.app' : 'layouts.guest')
-
+<!-- @extends(request()->is('beasiswa*') ? 'layouts.app' : 'layouts.guest') -->
+@extends(auth()->check() ? 'layouts.app' : 'layouts.guest')
 @section('title', 'Katalog Beasiswa')
 
 @section('content')
