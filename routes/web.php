@@ -12,12 +12,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
-Route::get('/', fn() => view('welcome'));
+Route::get('/', fn () => view('welcome'));
 
 Route::get('/dashboard', function (Request $request) {
     return match ($request->user()->role) {
         'admin' => redirect()->route('dashboard.admin'),
-        'dosen' => redirect()->route('dashboard.dosen'),
+        'dosen_pa' => redirect()->route('dashboard.dosen'),
         default => redirect()->route('dashboard.mahasiswa'),
     };
 })->middleware('auth')->name('dashboard');
@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
         })->name('admin');
 
         Route::get('/dosen', function (Request $request) {
-            abort_unless($request->user()->role === 'dosen', 403);
+            abort_unless($request->user()->role === 'dosen_pa', 403);
 
             return view('dashboard.dosen');
         })->name('dosen');
@@ -59,11 +59,12 @@ Route::middleware('auth')->group(function () {
 
             return view('beasiswa.katalog', compact('scholarships'));
         })->name('beasiswa.katalog');
-        Route::get('/pendaftaran', fn() => view('pendaftaran.index'))->name('pendaftaran.index');
-        Route::get('/pendaftaran/form', fn() => view('pendaftaran.create'))->name('pendaftaran.create');
-        Route::get('/pendaftaran/show', fn() => view('pendaftaran.show'))->name('pendaftaran.show');
-        Route::get('/akademik/upload-khs', fn() => view('akademik.upload-khs'))->name('akademik.upload');
-        Route::get('/tracer/form', fn() => view('tracer.form'))->name('tracer.form');
+
+        Route::get('/pendaftaran', fn () => view('pendaftaran.index'))->name('pendaftaran.index');
+        Route::get('/pendaftaran/form', fn () => view('pendaftaran.create'))->name('pendaftaran.create');
+        Route::get('/pendaftaran/show', fn () => view('pendaftaran.show'))->name('pendaftaran.show');
+        Route::get('/akademik/upload-khs', fn () => view('akademik.upload-khs'))->name('akademik.upload');
+        Route::get('/tracer/form', fn () => view('tracer.form'))->name('tracer.form');
     });
 });
 
@@ -73,6 +74,7 @@ Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
 
         return view('beasiswa.katalog', compact('scholarships'));
     })->name('katalog');
+
     Route::get('/show/{scholarship?}', [ScholarshipController::class, 'show'])->name('show');
 
     Route::middleware('auth')->group(function () {
@@ -85,13 +87,11 @@ Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
     });
 });
 
-Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
-    Route::middleware('auth')->group(function () {
-        Route::get('/', fn() => view('pendaftaran.index'))->name('index');
-        Route::get('/form', fn() => view('pendaftaran.create'))->name('create');
-        Route::get('/show', fn() => view('pendaftaran.show'))->name('show');
-        Route::get('/upload-sk', fn() => view('pendaftaran.upload'))->name('upload');
-    });
+Route::prefix('pendaftaran')->name('pendaftaran.')->middleware('auth')->group(function () {
+    Route::get('/', fn () => view('pendaftaran.index'))->name('index');
+    Route::get('/form', fn () => view('pendaftaran.create'))->name('create');
+    Route::get('/show', fn () => view('pendaftaran.show'))->name('show');
+    Route::get('/upload-sk', fn () => view('pendaftaran.upload'))->name('upload');
 });
 
 Route::prefix('verifikasi')->name('verifikasi.')->middleware('auth')->group(function () {
@@ -104,7 +104,7 @@ Route::prefix('verifikasi')->name('verifikasi.')->middleware('auth')->group(func
 
 Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function () {
     Route::get('/monitoring', function (Request $request) {
-        abort_unless($request->user()->role === 'dosen', 403);
+        abort_unless($request->user()->role === 'dosen_pa', 403);
 
         return view('akademik.monitoring-khs');
     })->name('monitoring');
@@ -120,7 +120,9 @@ Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function
 
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', Rule::in(['pending', 'verified', 'warning', 'revoked'])],
+            'status' => ['nullable', Rule::in(['pending', 'verified', 'aman', 'warning', 'kritis', 'critical', 'revoked'])],
+            'verification_status' => ['nullable', 'string', 'max:30'],
+            'ews_status' => ['nullable', 'string', 'max:30'],
         ]);
 
         $evaluations = SemesterEvaluation::query()
@@ -128,33 +130,33 @@ Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function
             ->when($filters['search'] ?? null, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->whereHas('user', function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('nim_nip', 'like', "%{$search}%");
+                        $query->where('name', 'ilike', "%{$search}%")
+                            ->orWhere('nim_nip', 'ilike', "%{$search}%");
                     })->orWhereHas('scholarship', function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%");
+                        $query->where('name', 'ilike', "%{$search}%");
                     });
                 });
             })
-            ->when($filters['status'] ?? null, fn($query, $status) => $query->where('status', $status))
+            ->when($filters['status'] ?? null, function ($query, $status) {
+                match ($status) {
+                    'pending', 'verified' => $query->where('verification_status', $status),
+                    'aman', 'warning' => $query->where('ews_status', $status),
+                    'kritis', 'critical', 'revoked' => $query->whereNotIn('ews_status', ['aman', 'warning']),
+                    default => null,
+                };
+            })
+            ->when($filters['verification_status'] ?? null, fn ($query, $status) => $query->where('verification_status', $status))
+            ->when($filters['ews_status'] ?? null, fn ($query, $ews) => $query->where('ews_status', $ews))
             ->orderByDesc('semester_ke')
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
         $totalEvaluations = SemesterEvaluation::count();
-        $safeCount = SemesterEvaluation::where('ips_score', '>=', 3.25)
-            ->whereNotIn('status', ['warning', 'revoked'])
-            ->count();
-        $warningCount = SemesterEvaluation::where('status', '!=', 'revoked')
-            ->where('ips_score', '>=', 3.00)
-            ->where(function ($query) {
-                $query->where('ips_score', '<', 3.25)->orWhere('status', 'warning');
-            })
-            ->count();
-        $criticalCount = SemesterEvaluation::where(function ($query) {
-            $query->where('status', 'revoked')->orWhere('ips_score', '<', 3.00);
-        })->count();
-        $pendingCount = SemesterEvaluation::where('status', 'pending')->count();
+        $safeCount = SemesterEvaluation::where('ews_status', 'aman')->count();
+        $warningCount = SemesterEvaluation::where('ews_status', 'warning')->count();
+        $criticalCount = SemesterEvaluation::whereNotIn('ews_status', ['aman', 'warning'])->count();
+        $pendingCount = SemesterEvaluation::where('verification_status', 'pending')->count();
 
         return view('akademik.evaluasi', compact(
             'evaluations',
@@ -169,13 +171,15 @@ Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function
 });
 
 Route::prefix('tracer')->name('tracer.')->group(function () {
-    Route::get('/', fn() => view('tracer.index'))->name('index');
-    Route::get('/form', function (Request $request) {
-        abort_unless($request->user()->role === 'mahasiswa', 403);
+    Route::get('/', fn () => view('tracer.index'))->name('index');
 
-        return view('tracer.form');
-    })->middleware('auth')->name('form');
     Route::middleware('auth')->group(function () {
+        Route::get('/form', function (Request $request) {
+            abort_unless($request->user()->role === 'mahasiswa', 403);
+
+            return view('tracer.form');
+        })->name('form');
+
         Route::get('/rekap/export', [AlumniTracerController::class, 'export'])->name('rekap.export');
         Route::get('/rekap', [AlumniTracerController::class, 'index'])->name('rekap');
     });
@@ -206,52 +210,52 @@ Route::prefix('users')->name('users.')->middleware('auth')->group(function () {
 
 Route::prefix('demo')->name('demo.')->group(function () {
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
-        Route::get('/admin', fn() => view('dashboard.admin'))->name('admin');
-        Route::get('/dosen', fn() => view('dashboard.dosen'))->name('dosen');
-        Route::get('/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa');
+        Route::get('/admin', fn () => view('dashboard.admin'))->name('admin');
+        Route::get('/dosen', fn () => view('dashboard.dosen'))->name('dosen');
+        Route::get('/mahasiswa', fn () => view('dashboard.mahasiswa'))->name('mahasiswa');
     });
 
     Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
-        Route::get('/', fn() => view('beasiswa.index'))->name('index');
-        Route::get('/katalog', fn() => view('beasiswa.katalog'))->name('katalog');
-        Route::get('/create', fn() => view('beasiswa.create'))->name('create');
-        Route::get('/edit', fn() => view('beasiswa.edit'))->name('edit');
-        Route::get('/show', fn() => view('beasiswa.show'))->name('show');
+        Route::get('/', fn () => view('beasiswa.index'))->name('index');
+        Route::get('/katalog', fn () => view('beasiswa.katalog'))->name('katalog');
+        Route::get('/create', fn () => view('beasiswa.create'))->name('create');
+        Route::get('/edit', fn () => view('beasiswa.edit'))->name('edit');
+        Route::get('/show', fn () => view('beasiswa.show'))->name('show');
     });
 
     Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
-        Route::get('/', fn() => view('pendaftaran.index'))->name('index');
-        Route::get('/form', fn() => view('pendaftaran.create'))->name('create');
-        Route::get('/show', fn() => view('pendaftaran.show'))->name('show');
-        Route::get('/upload-sk', fn() => view('pendaftaran.upload'))->name('upload');
+        Route::get('/', fn () => view('pendaftaran.index'))->name('index');
+        Route::get('/form', fn () => view('pendaftaran.create'))->name('create');
+        Route::get('/show', fn () => view('pendaftaran.show'))->name('show');
+        Route::get('/upload-sk', fn () => view('pendaftaran.upload'))->name('upload');
     });
 
     Route::prefix('verifikasi')->name('verifikasi.')->group(function () {
-        Route::get('/awal', fn() => view('verifikasi.awal'))->name('awal');
-        Route::get('/akhir', fn() => view('verifikasi.akhir'))->name('akhir');
-        Route::get('/detail', fn() => view('verifikasi.detail'))->name('detail');
+        Route::get('/awal', fn () => view('verifikasi.awal'))->name('awal');
+        Route::get('/akhir', fn () => view('verifikasi.akhir'))->name('akhir');
+        Route::get('/detail', fn () => view('verifikasi.detail'))->name('detail');
     });
 
     Route::prefix('akademik')->name('akademik.')->group(function () {
-        Route::get('/monitoring', fn() => view('akademik.monitoring-khs'))->name('monitoring');
-        Route::get('/upload-khs', fn() => view('akademik.upload-khs'))->name('upload');
-        Route::get('/evaluasi', fn() => view('akademik.evaluasi'))->name('evaluasi');
+        Route::get('/monitoring', fn () => view('akademik.monitoring-khs'))->name('monitoring');
+        Route::get('/upload-khs', fn () => view('akademik.upload-khs'))->name('upload');
+        Route::get('/evaluasi', fn () => view('akademik.evaluasi'))->name('evaluasi');
     });
 
     Route::prefix('tracer')->name('tracer.')->group(function () {
-        Route::get('/', fn() => view('tracer.index'))->name('index');
-        Route::get('/form', fn() => view('tracer.form'))->name('form');
-        Route::get('/rekap', fn() => view('tracer.rekap'))->name('rekap');
+        Route::get('/', fn () => view('tracer.index'))->name('index');
+        Route::get('/form', fn () => view('tracer.form'))->name('form');
+        Route::get('/rekap', fn () => view('tracer.rekap'))->name('rekap');
     });
 
     Route::prefix('announcements')->name('announcements.')->group(function () {
-        Route::get('/', fn() => view('announcements.index'))->name('index');
-        Route::get('/create', fn() => view('announcements.create'))->name('create');
+        Route::get('/', fn () => view('announcements.index'))->name('index');
+        Route::get('/create', fn () => view('announcements.create'))->name('create');
     });
 
     Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', fn() => view('users.index'))->name('index');
-        Route::get('/create', fn() => view('users.create'))->name('create');
+        Route::get('/', fn () => view('users.index'))->name('index');
+        Route::get('/create', fn () => view('users.create'))->name('create');
     });
 });
 

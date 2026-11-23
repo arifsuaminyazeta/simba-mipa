@@ -12,13 +12,17 @@ class SemesterEvaluation extends Model
         'scholarship_id',
         'semester_ke',
         'ips_score',
+        'ipk_score',
         'khs_file',
-        'status',
+        'verification_status',
+        'ews_status',
         'evaluator_notes',
     ];
 
     protected $casts = [
+        'semester_ke' => 'integer',
         'ips_score' => 'decimal:2',
+        'ipk_score' => 'decimal:2',
     ];
 
     public function user(): BelongsTo

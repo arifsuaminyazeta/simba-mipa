@@ -4,14 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AnnouncementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $role = $request->user()?->role;
+
         $announcements = Announcement::query()
             ->with('creator')
             ->where('is_active', true)
+            ->when($role !== 'admin', function ($query) use ($role) {
+                $allowedTargets = match ($role) {
+                    'mahasiswa' => ['public', 'all', 'mahasiswa'],
+                    'dosen_pa' => ['public', 'all', 'dosen_pa'],
+                    default => ['public'],
+                };
+
+                $query->whereIn('target_role', $allowedTargets);
+            })
             ->latest()
             ->paginate(10);
 
@@ -78,20 +90,19 @@ class AnnouncementController extends Controller
             ->with('success', 'Pengumuman berhasil dihapus.');
     }
 
-    /**
-     * @return array{title: string, content: string, is_active: bool}
-     */
     private function validatedData(Request $request): array
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:20000'],
+            'target_role' => ['nullable', Rule::in(['public', 'all', 'mahasiswa', 'dosen_pa'])],
             'is_active' => ['sometimes', 'boolean'],
         ]);
 
         return [
             'title' => $validated['title'],
             'content' => $validated['content'],
+            'target_role' => $validated['target_role'] ?? 'public',
             'is_active' => (bool) ($validated['is_active'] ?? false),
         ];
     }

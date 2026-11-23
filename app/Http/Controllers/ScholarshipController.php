@@ -13,11 +13,14 @@ class ScholarshipController extends Controller
     {
         abort_unless($request->user()?->role === 'admin', 403);
 
-        $scholarships = Scholarship::withCount('applications')
+        $scholarships = Scholarship::withCount([
+            'applications',
+            'applications as awardees_count' => fn($query) => $query->where('status', 'awardee_confirmed'),
+        ])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('provider', 'like', "%{$search}%");
+                    $query->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('provider', 'ilike', "%{$search}%");
                 });
             })
             ->when($request->status, fn($query, $status) => $query->where('status', $status))
@@ -44,7 +47,6 @@ class ScholarshipController extends Controller
         abort_unless($request->user()?->role === 'admin', 403);
 
         $data = $this->validatedData($request);
-        $data['remaining_quota'] = $data['quota'];
         Scholarship::create($data);
 
         return redirect()->route('beasiswa.index')->with('success', 'Beasiswa berhasil ditambahkan.');
@@ -62,7 +64,10 @@ class ScholarshipController extends Controller
             return redirect()->route($catalogRoute)->with('status', 'Belum ada data beasiswa untuk ditampilkan.');
         }
 
-        $scholarship->loadCount('applications');
+        $scholarship->loadCount([
+            'applications',
+            'applications as awardees_count' => fn($query) => $query->where('status', 'awardee_confirmed'),
+        ]);
 
         return view('beasiswa.show', compact('scholarship'));
     }
@@ -79,15 +84,16 @@ class ScholarshipController extends Controller
         abort_unless($request->user()?->role === 'admin', 403);
 
         $data = $this->validatedData($request);
-        $usedQuota = $scholarship->quota - $scholarship->remaining_quota;
+        $usedQuota = $scholarship->applications()
+            ->where('status', 'awardee_confirmed')
+            ->count();
 
-        if ($data['quota'] < $usedQuota) {
+        if ($data['quota'] !== null && $data['quota'] < $usedQuota) {
             return back()->withErrors([
-                'quota' => 'Kuota tidak boleh lebih kecil dari jumlah pendaftar.',
+                'quota' => 'Kuota tidak boleh lebih kecil dari jumlah awardee terkonfirmasi.',
             ])->withInput();
         }
 
-        $data['remaining_quota'] = $data['quota'] - $usedQuota;
         $scholarship->update($data);
 
         return redirect()->route('beasiswa.index')->with('success', 'Beasiswa berhasil diperbarui.');
@@ -111,8 +117,10 @@ class ScholarshipController extends Controller
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'provider' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'registration_url' => ['required', 'url', 'max:255'],
             'min_gpa' => ['required', 'numeric', 'min:0', 'max:4'],
-            'quota' => ['required', 'integer', 'min:1'],
+            'quota' => ['nullable', 'integer', 'min:1'],
             'open_date' => ['required', 'date'],
             'close_date' => ['required', 'date', 'after_or_equal:open_date'],
             'status' => ['required', Rule::in(['open', 'closed'])],

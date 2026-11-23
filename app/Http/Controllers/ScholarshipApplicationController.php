@@ -10,19 +10,28 @@ class ScholarshipApplicationController extends Controller
 {
     public function dosenIndex(Request $request)
     {
-        abort_unless($request->user()?->role === 'dosen', 403);
+        abort_unless($request->user()?->role === 'dosen_pa', 403);
 
-        $applications = ScholarshipApplication::with(['user', 'scholarship'])
+        $dosenId = $request->user()->id;
+
+        $baseQuery = ScholarshipApplication::whereHas(
+            'user',
+            fn($query) => $query->where('dosen_pa_id', $dosenId)
+        );
+
+        $applications = (clone $baseQuery)
+            ->with(['user', 'scholarship'])
             ->where('status', 'pending')
             ->when($request->search, function ($query, $search) {
-                $query->whereHas('user', fn($query) => $query->where('name', 'like', "%{$search}%"));
+                $query->whereHas('user', fn($query) => $query->where('name', 'ilike', "%{$search}%"));
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        $countPending = ScholarshipApplication::where('status', 'pending')->count();
-        $countVerified = ScholarshipApplication::where('status', 'verified_by_dosen')->count();
-        $countRejected = ScholarshipApplication::where('status', 'rejected_by_dosen')->count();
+        $countPending = (clone $baseQuery)->where('status', 'pending')->count();
+        $countVerified = (clone $baseQuery)->where('status', 'verified_by_dosen')->count();
+        $countRejected = (clone $baseQuery)->where('status', 'rejected_by_dosen')->count();
 
         return view('verifikasi.awal', compact('applications', 'countPending', 'countVerified', 'countRejected'));
     }
@@ -32,15 +41,22 @@ class ScholarshipApplicationController extends Controller
         abort_unless($request->user()?->role === 'admin', 403);
 
         $applications = ScholarshipApplication::with(['user', 'scholarship'])
-            ->whereIn('status', ['verified_by_dosen', 'approved_by_admin', 'rejected_by_admin'])
+            ->whereIn('status', [
+                'verified_by_dosen',
+                'approved_by_admin',
+                'rejected_by_admin',
+                'loa_submitted',
+                'awardee_confirmed',
+            ])
             ->when($request->search, function ($query, $search) {
-                $query->whereHas('user', fn($query) => $query->where('name', 'like', "%{$search}%"));
+                $query->whereHas('user', fn($query) => $query->where('name', 'ilike', "%{$search}%"));
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        $countPending = ScholarshipApplication::where('status', 'verified_by_dosen')->count();
-        $countApproved = ScholarshipApplication::where('status', 'approved_by_admin')->count();
+        $countPending = ScholarshipApplication::whereIn('status', ['verified_by_dosen', 'loa_submitted'])->count();
+        $countApproved = ScholarshipApplication::whereIn('status', ['approved_by_admin', 'awardee_confirmed'])->count();
         $countRejected = ScholarshipApplication::where('status', 'rejected_by_admin')->count();
 
         return view('verifikasi.akhir', compact('applications', 'countPending', 'countApproved', 'countRejected'));
@@ -48,16 +64,23 @@ class ScholarshipApplicationController extends Controller
 
     public function show(Request $request, ScholarshipApplication $application)
     {
-        abort_unless(in_array($request->user()?->role, ['admin', 'dosen'], true), 403);
+        $user = $request->user();
+        abort_unless(in_array($user?->role, ['admin', 'dosen_pa'], true), 403);
 
         $application->load(['user', 'scholarship']);
+
+        if ($user->role === 'dosen_pa') {
+            abort_unless($application->user?->dosen_pa_id === $user->id, 403);
+        }
 
         return view('verifikasi.detail', compact('application'));
     }
 
     public function verifyByDosen(Request $request, ScholarshipApplication $application)
     {
-        abort_unless($request->user()?->role === 'dosen', 403);
+        $user = $request->user();
+        abort_unless($user?->role === 'dosen_pa', 403);
+        abort_unless($application->user?->dosen_pa_id === $user->id, 403);
         abort_unless($application->status === 'pending', 422);
 
         $data = $request->validate([
@@ -76,28 +99,43 @@ class ScholarshipApplicationController extends Controller
     public function verifyByAdmin(Request $request, ScholarshipApplication $application)
     {
         abort_unless($request->user()?->role === 'admin', 403);
-        abort_unless($application->status === 'verified_by_dosen', 422);
+        abort_unless(in_array($application->status, ['verified_by_dosen', 'loa_submitted'], true), 422);
 
         $data = $request->validate([
             'decision' => ['required', Rule::in(['approve', 'reject'])],
             'admin_notes' => ['nullable', 'string', 'max:2000'],
+            'recommendation_letter_file' => ['nullable', 'file', 'mimes:pdf', 'max:2048'],
         ]);
 
-        if ($data['decision'] === 'approve') {
-            if (! $application->acceptance_proof_file) {
-                return back()->withErrors(['decision' => 'Bukti kelolosan belum diunggah.']);
+        if ($application->status === 'verified_by_dosen') {
+            $payload = [
+                'status' => $data['decision'] === 'approve' ? 'approved_by_admin' : 'rejected_by_admin',
+                'admin_notes' => $data['admin_notes'] ?? null,
+            ];
+
+            if ($data['decision'] === 'approve' && $request->hasFile('recommendation_letter_file')) {
+                $payload['recommendation_letter_file'] = $request->file('recommendation_letter_file')
+                    ->store('recommendations', 'public');
             }
 
-            $application->user->update(['is_awardee' => true]);
-            $application->update(['status' => 'approved_by_admin']);
+            $application->update($payload);
         } else {
-            $application->update(['status' => 'rejected_by_admin']);
-        }
+            if ($data['decision'] === 'approve') {
+                if (! $application->acceptance_proof_file) {
+                    return back()->withErrors(['decision' => 'Bukti kelolosan (LoA/SK) belum diunggah.']);
+                }
 
-        if (! empty($data['admin_notes'])) {
-            $application->update([
-                'dosen_notes' => trim(($application->dosen_notes ?? '')."\n\nCatatan Admin: ".$data['admin_notes']),
-            ]);
+                $application->update([
+                    'status' => 'awardee_confirmed',
+                    'admin_notes' => $data['admin_notes'] ?? $application->admin_notes,
+                ]);
+                $application->user->update(['is_awardee' => true]);
+            } else {
+                $application->update([
+                    'status' => 'rejected_by_admin',
+                    'admin_notes' => $data['admin_notes'] ?? $application->admin_notes,
+                ]);
+            }
         }
 
         return redirect()->route('verifikasi.akhir')->with('success', 'Keputusan Admin berhasil disimpan.');

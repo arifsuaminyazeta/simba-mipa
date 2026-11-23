@@ -11,24 +11,22 @@ return new class extends Migration
         Schema::create('scholarship_applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            // PERBAIKAN TYPO DI BAWAH INI:
             $table->foreignId('scholarship_id')->constrained('scholarships')->cascadeOnDelete();
-            
             $table->decimal('gpa_score', 3, 2);
-            $table->string('document_file'); // File syarat awal mendaftar
-            
-            // PENAMBAHAN KOLOM BARU:
-            $table->string('acceptance_proof_file')->nullable(); // Bukti SK/Pengumuman Lolos Resmi
-            
+            $table->string('document_file');
+            $table->string('recommendation_letter_file')->nullable();
+            $table->string('acceptance_proof_file')->nullable();
             $table->enum('status', [
-                'pending', 
-                'verified_by_dosen', 
-                'rejected_by_dosen', 
-                'approved_by_admin', 
-                'rejected_by_admin'
+                'pending',
+                'verified_by_dosen',
+                'rejected_by_dosen',
+                'approved_by_admin',
+                'rejected_by_admin',
+                'loa_submitted',
+                'awardee_confirmed',
             ])->default('pending');
-            
             $table->text('dosen_notes')->nullable();
+            $table->text('admin_notes')->nullable();
             $table->timestamps();
         });
     }

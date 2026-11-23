@@ -16,7 +16,7 @@ class UserController extends Controller
         $this->ensureAdmin($request);
 
         $lecturers = User::query()
-            ->where('role', 'dosen')
+            ->where('role', 'dosen_pa')
             ->withCount([
                 'advisees as active_advisees_count' => fn ($query) => $query
                     ->where('role', 'mahasiswa')
@@ -64,13 +64,17 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'nim_nip' => ['required', 'string', 'max:255', 'unique:users,nim_nip'],
             'major' => ['required', Rule::in(self::MAJORS)],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'is_active' => ['sometimes', 'boolean'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         User::create([
             ...$data,
-            'role' => 'dosen',
-            'academic_status' => 'aktif',
+            'role' => 'dosen_pa',
+            'academic_status' => null,
+            'is_awardee' => false,
+            'is_active' => $request->has('is_active') ? $request->boolean('is_active') : true,
         ]);
 
         return redirect()
@@ -99,11 +103,17 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'nim_nip' => ['required', 'string', 'max:255', Rule::unique('users', 'nim_nip')->ignore($user->id)],
             'major' => ['required', Rule::in(self::MAJORS)],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'is_active' => ['sometimes', 'boolean'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         if (blank($data['password'] ?? null)) {
             unset($data['password']);
+        }
+
+        if ($request->has('is_active')) {
+            $data['is_active'] = $request->boolean('is_active');
         }
 
         $user->update($data);
@@ -180,6 +190,6 @@ class UserController extends Controller
 
     private function ensureLecturer(User $user): void
     {
-        abort_unless($user->role === 'dosen', 404);
+        abort_unless($user->role === 'dosen_pa', 404);
     }
 }

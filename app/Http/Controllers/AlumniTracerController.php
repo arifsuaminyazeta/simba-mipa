@@ -21,28 +21,22 @@ class AlumniTracerController extends Controller
             ->withQueryString();
 
         $awardeeAlumni = AlumniTracer::query()->whereHas('user', function ($query) {
-            $query->where('is_awardee', true)->where('academic_status', 'alumni');
+            $query->where('is_awardee', true)->where('academic_status', 'lulus');
         });
 
         $totalResponses = (clone $awardeeAlumni)->count();
-        $employedResponses = (clone $awardeeAlumni)->where(function ($query) {
-            $query->whereNotNull('company_name')->where('company_name', '!=', '')
-                ->orWhere(function ($query) {
-                    $query->whereNotNull('job_title')->where('job_title', '!=', '');
-                });
-        })->count();
+        $employedResponses = (clone $awardeeAlumni)
+            ->whereIn('employment_status', ['bekerja', 'wirausaha'])
+            ->count();
         $sharingCount = (clone $awardeeAlumni)->where('ready_for_sharing', true)->count();
-        $averageWaitingMonths = (clone $awardeeAlumni)->where(function ($query) {
-            $query->whereNotNull('company_name')->where('company_name', '!=', '')
-                ->orWhere(function ($query) {
-                    $query->whereNotNull('job_title')->where('job_title', '!=', '');
-                });
-        })->avg('waiting_months');
+        $averageWaitingMonths = (clone $awardeeAlumni)
+            ->whereIn('employment_status', ['bekerja', 'wirausaha'])
+            ->avg('waiting_months');
 
         $majorBreakdown = AlumniTracer::query()
             ->join('users', 'users.id', '=', 'alumni_tracers.user_id')
             ->where('users.is_awardee', true)
-            ->where('users.academic_status', 'alumni')
+            ->where('users.academic_status', 'lulus')
             ->selectRaw('users.major, count(*) as total')
             ->groupBy('users.major')
             ->orderByDesc('total')
@@ -59,52 +53,28 @@ class AlumniTracerController extends Controller
         ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
     }
 
     public function export(Request $request)
@@ -126,6 +96,7 @@ class AlumniTracerController extends Controller
                 'NIM',
                 'Jurusan',
                 'Status Awardee',
+                'Status Pekerjaan',
                 'Jabatan',
                 'Perusahaan/Instansi',
                 'Kota',
@@ -142,6 +113,7 @@ class AlumniTracerController extends Controller
                         $tracer->user->nim_nip,
                         $tracer->user->major,
                         'Alumni Awardee',
+                        $tracer->employment_status,
                         $tracer->job_title,
                         $tracer->company_name,
                         $tracer->city,
@@ -160,37 +132,31 @@ class AlumniTracerController extends Controller
         ]);
     }
 
-    /**
-     * @return array{search?: string|null, major?: string|null, sharing?: string|null}
-     */
     private function validatedFilters(Request $request): array
     {
         return $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'major' => ['nullable', Rule::in(['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'])],
             'sharing' => ['nullable', Rule::in(['yes', 'no'])],
+            'employment_status' => ['nullable', 'string', 'max:50'],
         ]);
     }
 
-    /**
-     * @param  array{search?: string|null, major?: string|null, sharing?: string|null}  $filters
-     * @return Builder<AlumniTracer>
-     */
     private function filteredQuery(array $filters): Builder
     {
         return AlumniTracer::query()
             ->whereHas('user', function ($query) {
-                $query->where('is_awardee', true)->where('academic_status', 'alumni');
+                $query->where('is_awardee', true)->where('academic_status', 'lulus');
             })
             ->when($filters['search'] ?? null, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->whereHas('user', function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('nim_nip', 'like', "%{$search}%")
-                            ->orWhere('major', 'like', "%{$search}%");
-                    })->orWhere('company_name', 'like', "%{$search}%")
-                        ->orWhere('job_title', 'like', "%{$search}%")
-                        ->orWhere('city', 'like', "%{$search}%");
+                        $query->where('name', 'ilike', "%{$search}%")
+                            ->orWhere('nim_nip', 'ilike', "%{$search}%")
+                            ->orWhere('major', 'ilike', "%{$search}%");
+                    })->orWhere('company_name', 'ilike', "%{$search}%")
+                        ->orWhere('job_title', 'ilike', "%{$search}%")
+                        ->orWhere('city', 'ilike', "%{$search}%");
                 });
             })
             ->when($filters['major'] ?? null, function ($query, $major) {
@@ -198,6 +164,9 @@ class AlumniTracerController extends Controller
             })
             ->when($filters['sharing'] ?? null, function ($query, $sharing) {
                 $query->where('ready_for_sharing', $sharing === 'yes');
+            })
+            ->when($filters['employment_status'] ?? null, function ($query, $status) {
+                $query->where('employment_status', $status);
             });
     }
 

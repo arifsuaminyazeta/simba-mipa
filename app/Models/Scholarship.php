@@ -10,9 +10,10 @@ class Scholarship extends Model
     protected $fillable = [
         'name',
         'provider',
+        'description',
+        'registration_url',
         'min_gpa',
         'quota',
-        'remaining_quota',
         'open_date',
         'close_date',
         'status',
@@ -22,10 +23,16 @@ class Scholarship extends Model
         'open_date' => 'date',
         'close_date' => 'date',
         'min_gpa' => 'decimal:2',
+        'quota' => 'integer',
     ];
 
     public function applications(): HasMany
     {
         return $this->hasMany(ScholarshipApplication::class);
+    }
+
+    public function semesterEvaluations(): HasMany
+    {
+        return $this->hasMany(SemesterEvaluation::class);
     }
 }
