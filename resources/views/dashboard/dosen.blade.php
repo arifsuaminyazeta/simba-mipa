@@ -23,7 +23,7 @@
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Perlu Verifikasi Awal</p>
                 <h3 class="text-2xl font-extrabold text-amber-600 mt-1">3 Mahasiswa</h3>
-                <p class="text-[11px] text-slate-400 mt-1">Menunggu persetujuan Anda</p>
+                <p class="text-[11px] text-amber-600 font-medium mt-1">Menunggu persetujuan Anda</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -33,8 +33,8 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Mahasiswa Bimbingan</p>
-                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">28 Orang</h3>
-                <p class="text-[11px] text-slate-400 mt-1">Total mahasiswa bimbingan PA</p>
+                <h3 class="text-2xl font-extrabold text-blue-600 mt-1">28 Orang</h3>
+                <p class="text-[11px] text-blue-600 font-medium mt-1">Total mahasiswa bimbingan PA</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -45,7 +45,7 @@
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Peringatan EWS Bimbingan</p>
                 <h3 class="text-2xl font-extrabold text-rose-600 mt-1">1 Mahasiswa</h3>
-                <p class="text-[11px] text-rose-500 font-semibold mt-1">IPK &lt; 3.00 (Butuh evaluasi)</p>
+                <p class="text-[11px] text-rose-600 font-semibold mt-1">IPK &lt; 3.00 (Butuh evaluasi)</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>

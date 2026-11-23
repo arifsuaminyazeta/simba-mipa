@@ -20,7 +20,7 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Alumni Awardee</p>
-                <h2 class="text-2xl font-extrabold text-slate-800 mt-1">{{ number_format($totalResponses, 0, ',', '.') }}</h2>
+                <h2 class="text-2xl font-extrabold text-blue-600 mt-1">{{ number_format($totalResponses, 0, ',', '.') }}</h2>
                 <p class="text-[11px] text-slate-400 mt-1">Sudah mengisi tracer study</p>
             </div>
             <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">

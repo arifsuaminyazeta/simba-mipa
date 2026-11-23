@@ -38,13 +38,13 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
             <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Beasiswa Diterima</p>
-            <h3 class="text-lg font-extrabold text-slate-800 mt-1">Bank Indonesia</h3>
+            <h3 class="text-lg font-extrabold text-blue-700 mt-1">Bank Indonesia</h3>
             <p class="text-[11px] text-blue-600 font-semibold mt-1">Periode 2026/2027</p>
         </div>
 
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
             <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">IPK Terakhir</p>
-            <h3 class="text-2xl font-extrabold text-slate-800 mt-1">3.96</h3>
+            <h3 class="text-2xl font-extrabold text-emerald-600 mt-1">3.96</h3>
             <p class="text-[11px] text-emerald-600 font-semibold mt-1">✓ Memenuhi syarat aman EWS</p>
         </div>
 
@@ -57,7 +57,7 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
             <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Semester Berjalan</p>
             <h3 class="text-2xl font-extrabold text-blue-600 mt-1">Semester 5</h3>
-            <p class="text-[11px] text-slate-400 font-medium mt-1">T.A. 2026/2027</p>
+            <p class="text-[11px] text-blue-600 font-medium mt-1">T.A. 2026/2027</p>
         </div>
     </div>
 

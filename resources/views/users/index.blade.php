@@ -26,7 +26,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mahasiswa Aktif</p>
-            <p class="text-2xl font-extrabold text-slate-800 mt-1">{{ number_format($activeStudentCount, 0, ',', '.') }}</p>
+            <p class="text-2xl font-extrabold text-blue-600 mt-1">{{ number_format($activeStudentCount, 0, ',', '.') }}</p>
             <p class="text-[11px] text-slate-400 mt-1">Tersedia untuk pemetaan PA</p>
         </div>
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs">
@@ -67,7 +67,7 @@
                                 <span class="inline-flex px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-semibold">{{ $lecturer->major }}</span>
                             </td>
                             <td class="px-5 py-4">
-                                <span class="font-bold text-slate-800">{{ number_format($lecturer->active_advisees_count, 0, ',', '.') }}</span>
+                                <span class="font-bold text-blue-600">{{ number_format($lecturer->active_advisees_count, 0, ',', '.') }}</span>
                                 <span class="text-slate-400">mahasiswa aktif</span>
                             </td>
                             <td class="px-6 py-4">

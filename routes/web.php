@@ -11,6 +11,7 @@ use App\Models\SemesterEvaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\SemesterEvaluationController;
 
 Route::get('/', fn () => view('welcome'));
 
@@ -63,7 +64,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/pendaftaran', fn () => view('pendaftaran.index'))->name('pendaftaran.index');
         Route::get('/pendaftaran/form', fn () => view('pendaftaran.create'))->name('pendaftaran.create');
         Route::get('/pendaftaran/show', fn () => view('pendaftaran.show'))->name('pendaftaran.show');
-        Route::get('/akademik/upload-khs', fn () => view('akademik.upload-khs'))->name('akademik.upload');
+        Route::get('/akademik/upload-khs', [SemesterEvaluationController::class, 'create'])->name('akademik.upload');
         Route::get('/tracer/form', fn () => view('tracer.form'))->name('tracer.form');
     });
 });
@@ -103,71 +104,11 @@ Route::prefix('verifikasi')->name('verifikasi.')->middleware('auth')->group(func
 });
 
 Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function () {
-    Route::get('/monitoring', function (Request $request) {
-        abort_unless($request->user()->role === 'dosen_pa', 403);
-
-        return view('akademik.monitoring-khs');
-    })->name('monitoring');
-
-    Route::get('/upload-khs', function (Request $request) {
-        abort_unless($request->user()->role === 'mahasiswa', 403);
-
-        return view('akademik.upload-khs');
-    })->name('upload');
-
-    Route::get('/evaluasi', function (Request $request) {
-        abort_unless($request->user()->role === 'admin', 403);
-
-        $filters = $request->validate([
-            'search' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', Rule::in(['pending', 'verified', 'aman', 'warning', 'kritis', 'critical', 'revoked'])],
-            'verification_status' => ['nullable', 'string', 'max:30'],
-            'ews_status' => ['nullable', 'string', 'max:30'],
-        ]);
-
-        $evaluations = SemesterEvaluation::query()
-            ->with(['user', 'scholarship'])
-            ->when($filters['search'] ?? null, function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query->whereHas('user', function ($query) use ($search) {
-                        $query->where('name', 'ilike', "%{$search}%")
-                            ->orWhere('nim_nip', 'ilike', "%{$search}%");
-                    })->orWhereHas('scholarship', function ($query) use ($search) {
-                        $query->where('name', 'ilike', "%{$search}%");
-                    });
-                });
-            })
-            ->when($filters['status'] ?? null, function ($query, $status) {
-                match ($status) {
-                    'pending', 'verified' => $query->where('verification_status', $status),
-                    'aman', 'warning' => $query->where('ews_status', $status),
-                    'kritis', 'critical', 'revoked' => $query->whereNotIn('ews_status', ['aman', 'warning']),
-                    default => null,
-                };
-            })
-            ->when($filters['verification_status'] ?? null, fn ($query, $status) => $query->where('verification_status', $status))
-            ->when($filters['ews_status'] ?? null, fn ($query, $ews) => $query->where('ews_status', $ews))
-            ->orderByDesc('semester_ke')
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
-
-        $totalEvaluations = SemesterEvaluation::count();
-        $safeCount = SemesterEvaluation::where('ews_status', 'aman')->count();
-        $warningCount = SemesterEvaluation::where('ews_status', 'warning')->count();
-        $criticalCount = SemesterEvaluation::whereNotIn('ews_status', ['aman', 'warning'])->count();
-        $pendingCount = SemesterEvaluation::where('verification_status', 'pending')->count();
-
-        return view('akademik.evaluasi', compact(
-            'evaluations',
-            'filters',
-            'totalEvaluations',
-            'safeCount',
-            'warningCount',
-            'criticalCount',
-            'pendingCount'
-        ));
-    })->name('evaluasi');
+    Route::get('/monitoring', [SemesterEvaluationController::class, 'monitoring'])->name('monitoring');
+    Route::get('/upload-khs', [SemesterEvaluationController::class, 'create'])->name('upload');
+    Route::post('/upload-khs', [SemesterEvaluationController::class, 'store'])->name('store');
+    Route::post('/evaluasi/{evaluation}/verifikasi', [SemesterEvaluationController::class, 'verify'])->name('verify');
+    Route::get('/evaluasi', [SemesterEvaluationController::class, 'index'])->name('evaluasi');
 });
 
 Route::prefix('tracer')->name('tracer.')->group(function () {

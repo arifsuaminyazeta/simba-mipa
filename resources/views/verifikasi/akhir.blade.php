@@ -26,7 +26,7 @@
 
         <div class="bg-white border border-slate-200 rounded-2xl p-5">
             <p class="text-sm text-slate-500">Ditolak</p>
-            <h2 class="text-3xl font-bold text-red-500 mt-2">{{ $countRejected }}</h2>
+            <h2 class="text-3xl font-bold text-rose-600 mt-2">{{ $countRejected }}</h2>
         </div>
 
     </div>
@@ -84,7 +84,7 @@
                             {{ $item->scholarship->name }}
                         </td>
 
-                        <td class="px-3 py-4">
+                        <td class="px-3 py-4 font-bold text-blue-600">
                             {{ number_format($item->gpa_score, 2) }}
                         </td>
 

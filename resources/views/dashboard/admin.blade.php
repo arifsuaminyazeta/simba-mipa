@@ -23,7 +23,7 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Pendaftar</p>
-                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">184</h3>
+                <h3 class="text-2xl font-extrabold text-blue-600 mt-1">184</h3>
                 <p class="text-[11px] text-emerald-600 font-semibold mt-1">↑ 12% dari semester lalu</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -34,7 +34,7 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Verifikasi Akhir</p>
-                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">42</h3>
+                <h3 class="text-2xl font-extrabold text-amber-600 mt-1">42</h3>
                 <p class="text-[11px] text-amber-600 font-semibold mt-1">Menunggu approval subbag</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">

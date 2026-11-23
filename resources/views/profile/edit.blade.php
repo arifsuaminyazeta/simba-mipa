@@ -115,7 +115,7 @@
             </div>
 
             <div class="pt-2">
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white text-xs font-semibold hover:bg-slate-900 transition-colors">
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors shadow-xs">
                     Perbarui Kata Sandi
                 </button>
             </div>

@@ -52,14 +52,14 @@
 
             <div>
                 <p class="text-xs text-slate-400">IPK Mahasiswa</p>
-                <p class="font-semibold text-slate-800 mt-1">
+                <p class="font-bold {{ $application->gpa_score >= $application->scholarship->min_gpa ? 'text-emerald-600' : 'text-rose-600' }} mt-1 text-base">
                     {{ number_format($application->gpa_score, 2) }}
                 </p>
             </div>
 
             <div>
                 <p class="text-xs text-slate-400">Minimal IPK Beasiswa</p>
-                <p class="font-semibold text-slate-800 mt-1">
+                <p class="font-bold text-amber-600 mt-1 text-base">
                     {{ number_format($application->scholarship->min_gpa, 2) }}
                 </p>
             </div>

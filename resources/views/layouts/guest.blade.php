@@ -28,7 +28,7 @@
     </div>
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+        <div class="w-full pl-2 pr-4 lg:pl-3 lg:pr-6 h-20 flex items-center justify-between">
             <a href="{{ url('/') }}" class="flex items-center gap-3">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo SIMBA-MIPA" class="w-11 h-11 object-contain rounded-xl">
                 <div>

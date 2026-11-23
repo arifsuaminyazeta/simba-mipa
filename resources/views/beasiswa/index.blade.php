@@ -33,7 +33,7 @@
 
         <div class="bg-white border border-slate-200 rounded-2xl p-5">
             <p class="text-sm text-slate-500">Total Beasiswa</p>
-            <h2 class="text-3xl font-bold text-slate-800 mt-2">{{ $total ?? 0 }}</h2>
+            <h2 class="text-3xl font-bold text-indigo-600 mt-2">{{ $total ?? 0 }}</h2>
             <p class="text-xs text-slate-400 mt-2">Seluruh program terdaftar</p>
         </div>
 
@@ -68,7 +68,7 @@
                 <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>Ditutup</option>
             </select>
 
-            <button class="px-5 py-3 bg-slate-800 text-white rounded-xl text-sm font-medium">
+            <button class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors shadow-xs">
                 Filter
             </button>
 

@@ -65,7 +65,7 @@
                     <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 text-xs space-y-2 mb-6">
                         <div class="flex justify-between text-[11px]">
                             <span class="text-slate-400">Minimal IPK:</span>
-                            <span class="font-bold text-slate-700">3.00</span>
+                            <span class="font-bold text-amber-600">3.00</span>
                         </div>
                         <div class="flex justify-between text-[11px]">
                             <span class="text-slate-400">Semester:</span>
@@ -106,7 +106,7 @@
                     <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 text-xs space-y-2 mb-6">
                         <div class="flex justify-between text-[11px]">
                             <span class="text-slate-400">Minimal IPK:</span>
-                            <span class="font-bold text-slate-700">3.20</span>
+                            <span class="font-bold text-amber-600">3.20</span>
                         </div>
                         <div class="flex justify-between text-[11px]">
                             <span class="text-slate-400">Semester:</span>
@@ -147,7 +147,7 @@
                     <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 text-xs space-y-2 mb-6">
                         <div class="flex justify-between text-[11px]">
                             <span class="text-slate-400">Minimal IPK:</span>
-                            <span class="font-bold text-slate-700">2.75</span>
+                            <span class="font-bold text-amber-600">2.75</span>
                         </div>
                         <div class="flex justify-between text-[11px]">
                             <span class="text-slate-400">Semester:</span>
