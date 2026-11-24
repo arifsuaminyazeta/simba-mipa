@@ -177,9 +177,9 @@
                                 </div>
 
                                 <!-- Dialog Modal Verifikasi KHS -->
-                                <dialog id="verify-modal-{{ $evaluation->id }}" class="rounded-2xl p-0 backdrop:bg-slate-900/50 shadow-2xl max-w-lg w-full m-auto border border-slate-200">
-                                    <div class="bg-white p-6 rounded-2xl text-left">
-                                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                                <dialog id="verify-modal-{{ $evaluation->id }}" class="m-auto w-[calc(100%-2rem)] max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white p-0 text-left shadow-2xl">
+                                    <div class="dialog-scroll text-left">
+                                        <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-6" style="min-height:72px;padding:14px 24px;">
                                             <div>
                                                 <h3 class="text-sm font-bold text-slate-800">Verifikasi KHS Mahasiswa</h3>
                                                 <p class="text-xs text-slate-400 mt-0.5">{{ $evaluation->user->name }} · Semester {{ $evaluation->semester_ke }}</p>
@@ -187,7 +187,7 @@
                                             <button type="button" onclick="document.getElementById('verify-modal-{{ $evaluation->id }}').close()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center text-sm font-bold">✕</button>
                                         </div>
 
-                                        <form action="{{ route('akademik.verify', $evaluation) }}" method="POST" class="space-y-4 mt-5">
+                                        <form action="{{ route('akademik.verify', $evaluation) }}" method="POST" class="space-y-4" style="padding:18px 24px 0;">
                                             @csrf
                                             <div>
                                                 <label class="block text-xs font-semibold text-slate-700 mb-1.5">Keputusan Pembimbing Akademik <span class="text-rose-500">*</span></label>
@@ -208,7 +208,7 @@
                                                 <textarea id="notes-{{ $evaluation->id }}" name="evaluator_notes" rows="3" placeholder="Tuliskan catatan akademik atau anjuran untuk mahasiswa..." class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-800 font-medium">{{ old('evaluator_notes', $evaluation->evaluator_notes) }}</textarea>
                                             </div>
 
-                                            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                                            <div class="flex items-center justify-end gap-2 border-t border-slate-100 bg-white py-4">
                                                 <button type="button" onclick="document.getElementById('verify-modal-{{ $evaluation->id }}').close()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-colors">Batal</button>
                                                 <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors shadow-xs">Simpan Keputusan</button>
                                             </div>

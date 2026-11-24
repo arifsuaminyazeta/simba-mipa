@@ -37,12 +37,102 @@ class UserController extends Controller
             ->count();
         $unassignedStudentCount = $activeStudentCount - $assignedStudentCount;
 
+        $studentQuery = User::query()
+            ->where('role', 'mahasiswa')
+            ->with('academicAdvisor');
+
+        if ($search = trim((string) $request->query('search'))) {
+            $studentQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('nim_nip', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($category = $request->query('student_category')) {
+            $studentQuery->when($category === 'umum', fn ($query) => $query
+                ->where('academic_status', 'aktif')
+                ->where('is_awardee', false))
+                ->when($category === 'awardee', fn ($query) => $query
+                    ->where('academic_status', 'aktif')
+                    ->where('is_awardee', true))
+                ->when($category === 'alumni_awardee', fn ($query) => $query
+                    ->where('academic_status', 'lulus')
+                    ->where('is_awardee', true));
+        }
+
+        $students = $studentQuery
+            ->orderBy('major')
+            ->orderBy('name')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('users.index', compact(
             'lecturers',
             'activeStudentCount',
             'assignedStudentCount',
-            'unassignedStudentCount'
+            'unassignedStudentCount',
+            'students'
         ));
+    }
+
+    public function editStudent(Request $request, User $student)
+    {
+        $this->ensureAdmin($request);
+        abort_unless($student->role === 'mahasiswa', 404);
+
+        $advisors = User::query()
+            ->where('role', 'dosen_pa')
+            ->where('is_active', true)
+            ->orderBy('major')
+            ->orderBy('name')
+            ->get();
+
+        $category = $student->academic_status === 'lulus'
+            ? ($student->is_awardee ? 'alumni_awardee' : 'umum')
+            : ($student->is_awardee ? 'awardee' : 'umum');
+
+        return view('users.edit-student', compact('student', 'advisors', 'category'));
+    }
+
+    public function updateStudent(Request $request, User $student)
+    {
+        $this->ensureAdmin($request);
+        abort_unless($student->role === 'mahasiswa', 404);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($student->id)],
+            'nim_nip' => ['required', 'string', 'max:255', Rule::unique('users', 'nim_nip')->ignore($student->id)],
+            'major' => ['required', Rule::in(self::MAJORS)],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'student_category' => ['required', Rule::in(['umum', 'awardee', 'alumni_awardee'])],
+            'dosen_pa_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where(fn ($query) => $query
+                ->where('role', 'dosen_pa')
+                ->where('is_active', true))],
+            'is_active' => ['sometimes', 'boolean'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if (blank($data['password'] ?? null)) {
+            unset($data['password']);
+        }
+
+        $category = $data['student_category'];
+        unset($data['student_category']);
+
+        $data['academic_status'] = $category === 'alumni_awardee' ? 'lulus' : 'aktif';
+        $data['is_awardee'] = $category !== 'umum';
+        $data['dosen_pa_id'] = $category === 'alumni_awardee'
+            ? null
+            : ($data['dosen_pa_id'] ?? null);
+        $data['is_active'] = $request->boolean('is_active');
+
+        $student->update($data);
+
+        return redirect()
+            ->route('users.index', ['student_category' => $category])
+            ->with('success', 'Data dan status mahasiswa berhasil diperbarui.');
     }
 
     public function create(Request $request)

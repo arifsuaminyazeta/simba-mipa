@@ -21,7 +21,7 @@
             <div>
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Alumni Awardee</p>
                 <h2 class="text-2xl font-extrabold text-blue-600 mt-1">{{ number_format($totalResponses, 0, ',', '.') }}</h2>
-                <p class="text-[11px] text-slate-400 mt-1">Sudah mengisi tracer study</p>
+                <p class="text-[11px] text-blue-600 font-medium mt-1">Sudah mengisi tracer study</p>
             </div>
             <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -32,7 +32,7 @@
             <div>
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sudah Bekerja</p>
                 <h2 class="text-2xl font-extrabold text-emerald-600 mt-1">{{ number_format($employedResponses, 0, ',', '.') }}</h2>
-                <p class="text-[11px] text-slate-400 mt-1">Memiliki posisi atau tempat kerja</p>
+                <p class="text-[11px] text-emerald-600 font-medium mt-1">Memiliki posisi atau tempat kerja</p>
             </div>
             <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -43,7 +43,7 @@
             <div>
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Siap Berbagi</p>
                 <h2 class="text-2xl font-extrabold text-indigo-600 mt-1">{{ number_format($sharingCount, 0, ',', '.') }}</h2>
-                <p class="text-[11px] text-slate-400 mt-1">Kontak dapat ditindaklanjuti</p>
+                <p class="text-[11px] text-indigo-600 font-medium mt-1">Kontak dapat ditindaklanjuti</p>
             </div>
             <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4v-4z"/></svg>
@@ -60,7 +60,7 @@
                         —
                     @endif
                 </h2>
-                <p class="text-[11px] text-slate-400 mt-1">Dari alumni yang sudah bekerja</p>
+                <p class="text-[11px] text-amber-500 font-medium mt-1">Dari alumni yang sudah bekerja</p>
             </div>
             <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

@@ -158,6 +158,8 @@ Route::prefix('users')->name('users.')->middleware('auth')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('index');
     Route::get('/create', [UserController::class, 'create'])->name('create');
     Route::post('/', [UserController::class, 'store'])->name('store');
+    Route::get('/students/{student}/edit', [UserController::class, 'editStudent'])->name('students.edit');
+    Route::put('/students/{student}', [UserController::class, 'updateStudent'])->name('students.update');
     Route::get('/{dosen}/advisees', [UserController::class, 'advisees'])->name('advisees');
     Route::put('/{dosen}/advisees', [UserController::class, 'updateAdvisees'])->name('advisees.update');
     Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
