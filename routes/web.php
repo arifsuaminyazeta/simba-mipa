@@ -61,9 +61,18 @@ Route::middleware('auth')->group(function () {
             return view('beasiswa.katalog', compact('scholarships'));
         })->name('beasiswa.katalog');
 
-        Route::get('/pendaftaran', fn () => view('pendaftaran.index'))->name('pendaftaran.index');
-        Route::get('/pendaftaran/form', fn () => view('pendaftaran.create'))->name('pendaftaran.create');
-        Route::get('/pendaftaran/show', fn () => view('pendaftaran.show'))->name('pendaftaran.show');
+        Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
+            Route::get('/', [ScholarshipApplicationController::class, 'mahasiswaIndex'])->name('index');
+            Route::get('/form', [ScholarshipApplicationController::class, 'create'])->name('create');
+            Route::post('/', [ScholarshipApplicationController::class, 'store'])->name('store');
+            Route::get('/show/{application}', [ScholarshipApplicationController::class, 'show'])->name('show');
+            Route::get('/{application}/edit', [ScholarshipApplicationController::class, 'edit'])->name('edit');
+            Route::put('/{application}', [ScholarshipApplicationController::class, 'update'])->name('update');
+            Route::delete('/{application}', [ScholarshipApplicationController::class, 'destroy'])->name('destroy');
+            Route::get('/{application}/upload-sk', [ScholarshipApplicationController::class, 'uploadForm'])->name('upload');
+            Route::post('/{application}/upload-sk', [ScholarshipApplicationController::class, 'uploadAcceptanceProof'])->name('upload-sk.store');
+            Route::get('/{application}/rekomendasi', [ScholarshipApplicationController::class, 'downloadRecommendation'])->name('recommendation');
+        });
         Route::get('/akademik/upload-khs', [SemesterEvaluationController::class, 'create'])->name('akademik.upload');
         Route::get('/tracer/form', fn () => view('tracer.form'))->name('tracer.form');
     });
@@ -89,10 +98,16 @@ Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
 });
 
 Route::prefix('pendaftaran')->name('pendaftaran.')->middleware('auth')->group(function () {
-    Route::get('/', fn () => view('pendaftaran.index'))->name('index');
-    Route::get('/form', fn () => view('pendaftaran.create'))->name('create');
-    Route::get('/show', fn () => view('pendaftaran.show'))->name('show');
-    Route::get('/upload-sk', fn () => view('pendaftaran.upload'))->name('upload');
+    Route::get('/', [ScholarshipApplicationController::class, 'mahasiswaIndex'])->name('index');
+    Route::get('/form', [ScholarshipApplicationController::class, 'create'])->name('create');
+    Route::post('/', [ScholarshipApplicationController::class, 'store'])->name('store');
+    Route::get('/show/{application}', [ScholarshipApplicationController::class, 'show'])->name('show');
+    Route::get('/{application}/edit', [ScholarshipApplicationController::class, 'edit'])->name('edit');
+    Route::put('/{application}', [ScholarshipApplicationController::class, 'update'])->name('update');
+    Route::delete('/{application}', [ScholarshipApplicationController::class, 'destroy'])->name('destroy');
+    Route::get('/{application}/upload-sk', [ScholarshipApplicationController::class, 'uploadForm'])->name('upload');
+    Route::post('/{application}/upload-sk', [ScholarshipApplicationController::class, 'uploadAcceptanceProof'])->name('upload-sk.store');
+    Route::get('/{application}/rekomendasi', [ScholarshipApplicationController::class, 'downloadRecommendation'])->name('recommendation');
 });
 
 Route::prefix('verifikasi')->name('verifikasi.')->middleware('auth')->group(function () {

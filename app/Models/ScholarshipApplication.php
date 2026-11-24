@@ -12,6 +12,8 @@ class ScholarshipApplication extends Model
         'scholarship_id',
         'gpa_score',
         'document_file',
+        'statement_file',
+        'motivation_file',
         'recommendation_letter_file',
         'acceptance_proof_file',
         'status',

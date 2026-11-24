@@ -19,29 +19,29 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'nim_nip' => ['required', 'string', 'max:30', 'unique:users,nim_nip'],
+            'npm' => ['required', 'string', 'max:30', 'unique:users,nim_nip'],
             'email' => ['required', 'email', 'lowercase', 'max:255', 'unique:users,email'],
             'major' => [
                 'required',
                 Rule::in(['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi']),
             ],
             'phone' => ['nullable', 'string', 'max:30'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Rules\Password::min(8)],
         ], [
-            'nim_nip.unique' => 'NIM sudah terdaftar.',
+            'npm.unique' => 'NPM sudah terdaftar.',
             'email.unique' => 'Email sudah digunakan.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'nim_nip' => $request->nim_nip,
-            'email' => $request->email,
-            'major' => $request->major,
-            'phone' => $request->phone,
-            'password' => $request->password,
+            'name' => $data['name'],
+            'nim_nip' => $data['npm'],
+            'email' => $data['email'],
+            'major' => $data['major'],
+            'phone' => $data['phone'] ?? null,
+            'password' => $data['password'],
             'role' => 'mahasiswa',
             'academic_status' => 'aktif',
             'is_awardee' => false,

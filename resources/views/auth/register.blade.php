@@ -32,8 +32,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="nim_nip" class="block text-xs font-semibold text-slate-700 mb-2">NIM</label>
-                <input id="nim_nip" type="text" name="nim_nip" value="{{ old('nim_nip') }}" required
+                <label for="npm" class="block text-xs font-semibold text-slate-700 mb-2">NPM</label>
+                <input id="npm" type="text" name="npm" value="{{ old('npm') }}" required
                     class="w-full px-3 py-2.5 text-sm border border-slate-300 rounded outline-none focus:border-blue-600">
             </div>
 
@@ -55,8 +55,9 @@
 
             <div class="mb-4">
                 <label for="password" class="block text-xs font-semibold text-slate-700 mb-2">Password</label>
-                <input id="password" type="password" name="password" required
+                <input id="password" type="password" name="password" minlength="8" required
                     class="w-full px-3 py-2.5 text-sm border border-slate-300 rounded outline-none focus:border-blue-600">
+                <p class="mt-1 text-[11px] text-slate-500">Password minimal 8 karakter.</p>
             </div>
 
             <div class="mb-5">
