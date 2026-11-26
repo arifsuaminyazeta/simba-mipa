@@ -2,53 +2,48 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\AlumniTracer;
+use App\Models\Announcement;
 use App\Models\Scholarship;
 use App\Models\ScholarshipApplication;
 use App\Models\SemesterEvaluation;
-use App\Models\AlumniTracer;
-use App\Models\Announcement;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN
-        |--------------------------------------------------------------------------
-        */
-
         $admin = User::updateOrCreate(
             ['email' => 'admin.simbamipa@gmail.com'],
             [
                 'name' => 'Administrator SIMBA',
                 'password' => 'Admin12345',
                 'role' => 'admin',
-                'nim_nip' => '000000000',
-                'major' => 'Admin',
-                'academic_status' => 'aktif',
+                'nim_nip' => '100000001',
+                'major' => null,
+                'academic_status' => null,
                 'is_awardee' => false,
+                'is_active' => true,
+                'phone' => '081270000001',
+                'avatar' => null,
                 'email_verified_at' => now(),
             ]
         );
 
-        /*
-        |--------------------------------------------------------------------------
-        | DOSEN
-        |--------------------------------------------------------------------------
-        */
-
         $dosen1 = User::updateOrCreate(
             ['email' => 'dosen1@simba.test'],
             [
-                'name' => 'Dr. Budi Santoso, M.Kom',
+                'name' => 'Muhammad Afdhaluddin, M.Kom',
                 'password' => 'password',
                 'role' => 'dosen_pa',
-                'nim_nip' => '198001012005011002',
+                'nim_nip' => '198001012005011001',
                 'major' => 'Ilmu Komputer',
-                'academic_status' => 'aktif',
+                'academic_status' => null,
+                'is_awardee' => false,
+                'is_active' => true,
+                'phone' => '081270000002',
+                'avatar' => null,
                 'email_verified_at' => now(),
             ]
         );
@@ -59,25 +54,24 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Dr. Siti Rahmawati, M.Si',
                 'password' => 'password',
                 'role' => 'dosen_pa',
-                'nim_nip' => '198502022010012012',
+                'nim_nip' => '198502022010012002',
                 'major' => 'Matematika',
-                'academic_status' => 'aktif',
+                'academic_status' => null,
+                'is_awardee' => false,
+                'is_active' => true,
+                'phone' => '081270000003',
+                'avatar' => null,
                 'email_verified_at' => now(),
             ]
         );
 
-        /*
-        |--------------------------------------------------------------------------
-        | MAHASISWA
-        |--------------------------------------------------------------------------
-        */
-
         $students = [
             [
-                'name' => 'Ahmad Fauzi',
-                'email' => 'ahmad@simba.test',
-                'nim_nip' => '2217051001',
+                'name' => 'M. Surya Gymnastyar',
+                'email' => 'surya@simba.test',
+                'nim_nip' => '2417051011',
                 'major' => 'Ilmu Komputer',
+                'phone' => '081234567890',
                 'dosen_pa_id' => $dosen1->id,
             ],
             [
@@ -85,13 +79,15 @@ class DatabaseSeeder extends Seeder
                 'email' => 'lestari@simba.test',
                 'nim_nip' => '2317041020',
                 'major' => 'Fisika',
+                'phone' => '081270000102',
                 'dosen_pa_id' => $dosen1->id,
             ],
             [
-                'name' => 'Rizky Pratama',
-                'email' => 'rizky@simba.test',
-                'nim_nip' => '2317051012',
+                'name' => 'Zahira Adiah Safa',
+                'email' => 'zahira@simba.test',
+                'nim_nip' => '2417051012',
                 'major' => 'Ilmu Komputer',
+                'phone' => '081270000103',
                 'dosen_pa_id' => $dosen1->id,
             ],
             [
@@ -99,6 +95,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'nadia@simba.test',
                 'nim_nip' => '2317031005',
                 'major' => 'Matematika',
+                'phone' => '081270000104',
                 'dosen_pa_id' => $dosen2->id,
             ],
             [
@@ -106,6 +103,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'dimas@simba.test',
                 'nim_nip' => '2217041015',
                 'major' => 'Fisika',
+                'phone' => '081270000105',
                 'dosen_pa_id' => $dosen1->id,
             ],
             [
@@ -113,6 +111,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'salsa@simba.test',
                 'nim_nip' => '2317021008',
                 'major' => 'Kimia',
+                'phone' => '081270000106',
                 'dosen_pa_id' => $dosen2->id,
             ],
             [
@@ -120,13 +119,23 @@ class DatabaseSeeder extends Seeder
                 'email' => 'fajar@simba.test',
                 'nim_nip' => '2217011009',
                 'major' => 'Biologi',
+                'phone' => '081270000107',
                 'dosen_pa_id' => $dosen2->id,
             ],
             [
-                'name' => 'Putri Maharani',
-                'email' => 'putri@simba.test',
-                'nim_nip' => '2317051025',
+                'name' => 'FX Novryandhika Widyanto',
+                'email' => 'fx@simba.test',
+                'nim_nip' => '2457051013',
                 'major' => 'Ilmu Komputer',
+                'phone' => '081270000108',
+                'dosen_pa_id' => $dosen1->id,
+            ],
+            [
+                'name' => 'Muhamad Arif',
+                'email' => 'arif@simba.test',
+                'nim_nip' => '2417051045',
+                'major' => 'Ilmu Komputer',
+                'phone' => '081270000109',
                 'dosen_pa_id' => $dosen1->id,
             ],
         ];
@@ -141,24 +150,21 @@ class DatabaseSeeder extends Seeder
                     'role' => 'mahasiswa',
                     'academic_status' => 'aktif',
                     'is_awardee' => false,
+                    'is_active' => true,
+                    'avatar' => null,
                     'email_verified_at' => now(),
                 ])
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | DATA BEASISWA
-        |--------------------------------------------------------------------------
-        */
-
         $scholarshipData = [
             [
-                'name' => 'Beasiswa Bank Indonesia',
+                'name' => 'Beasiswa Bantuan Pendidikan Kebanksentralan 2026',
                 'provider' => 'Bank Indonesia',
+                'description' => 'Program beasiswa reguler dan unggulan Bank Indonesia bagi mahasiswa S1 berprestasi serta aktif dalam komunitas Generasi Baru Indonesia (GenBI).',
+                'registration_url' => 'https://www.bi.go.id',
                 'min_gpa' => 3.00,
-                'quota' => 30,
-                'remaining_quota' => 22,
+                'quota' => 20,
                 'open_date' => '2026-10-01',
                 'close_date' => '2026-12-15',
                 'status' => 'open',
@@ -166,9 +172,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Djarum Beasiswa Plus',
                 'provider' => 'Djarum Foundation',
+                'description' => 'Beasiswa prestasi disertai pelatihan soft skills kepemimpinan bagi mahasiswa S1 semester IV dari seluruh jurusan.',
+                'registration_url' => 'https://djarumbeasiswaplus.org',
                 'min_gpa' => 3.20,
                 'quota' => 20,
-                'remaining_quota' => 14,
                 'open_date' => '2026-10-05',
                 'close_date' => '2026-12-20',
                 'status' => 'open',
@@ -176,9 +183,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Beasiswa KIP Kuliah',
                 'provider' => 'Kemendikbudristek',
+                'description' => 'Bantuan biaya pendidikan dan biaya hidup dari pemerintah bagi mahasiswa berprestasi dengan keterbatasan ekonomi.',
+                'registration_url' => 'https://kip-kuliah.kemdikbud.go.id',
                 'min_gpa' => 2.75,
-                'quota' => 50,
-                'remaining_quota' => 35,
+                'quota' => null,
                 'open_date' => '2026-09-01',
                 'close_date' => '2026-11-30',
                 'status' => 'open',
@@ -186,9 +194,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Beasiswa Unggulan',
                 'provider' => 'Kemendikbudristek',
+                'description' => 'Program beasiswa bagi mahasiswa berprestasi tingkat nasional maupun internasional yang sedang menempuh pendidikan jenjang S1.',
+                'registration_url' => 'https://beasiswaunggulan.kemdikbud.go.id',
                 'min_gpa' => 3.50,
                 'quota' => 15,
-                'remaining_quota' => 10,
                 'open_date' => '2026-08-01',
                 'close_date' => '2026-09-30',
                 'status' => 'closed',
@@ -196,9 +205,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Beasiswa Prestasi Akademik FMIPA',
                 'provider' => 'FMIPA Universitas Lampung',
+                'description' => 'Program apresiasi akademik internal FMIPA Universitas Lampung untuk mahasiswa aktif dengan capaian IPK unggul.',
+                'registration_url' => 'https://fmipa.unila.ac.id',
                 'min_gpa' => 3.25,
                 'quota' => 25,
-                'remaining_quota' => 17,
                 'open_date' => '2026-10-10',
                 'close_date' => '2026-12-10',
                 'status' => 'open',
@@ -214,68 +224,86 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | PENGAJUAN BEASISWA
-        |--------------------------------------------------------------------------
-        */
-
         $applications = [
             [
-                'email' => 'ahmad@simba.test',
-                'scholarship' => 'Beasiswa Bank Indonesia',
-                'gpa' => 3.88,
-                'status' => 'verified_by_dosen',
-                'notes' => 'Berkas lengkap dan memenuhi persyaratan akademik.',
-            ],
-            [
-                'email' => 'lestari@simba.test',
-                'scholarship' => 'Djarum Beasiswa Plus',
-                'gpa' => 3.65,
-                'status' => 'verified_by_dosen',
-                'notes' => 'Dokumen telah diperiksa dan dinyatakan memenuhi syarat.',
-            ],
-            [
-                'email' => 'rizky@simba.test',
+                'email' => 'zahira@simba.test',
                 'scholarship' => 'Beasiswa KIP Kuliah',
                 'gpa' => 3.45,
                 'status' => 'pending',
-                'notes' => null,
+                'recommendation_letter_file' => null,
+                'acceptance_proof_file' => null,
+                'dosen_notes' => null,
+                'admin_notes' => null,
             ],
             [
-                'email' => 'nadia@simba.test',
-                'scholarship' => 'Beasiswa Prestasi Akademik FMIPA',
-                'gpa' => 3.91,
-                'status' => 'approved_by_admin',
-                'notes' => 'Pengajuan disetujui.',
+                'email' => 'fajar@simba.test',
+                'scholarship' => 'Beasiswa KIP Kuliah',
+                'gpa' => 3.38,
+                'status' => 'verified_by_dosen',
+                'recommendation_letter_file' => null,
+                'acceptance_proof_file' => null,
+                'dosen_notes' => 'Berkas lengkap dan memenuhi persyaratan akademik.',
+                'admin_notes' => null,
             ],
             [
                 'email' => 'dimas@simba.test',
-                'scholarship' => 'Beasiswa Bank Indonesia',
+                'scholarship' => 'Beasiswa Bantuan Pendidikan Kebanksentralan 2026',
                 'gpa' => 3.72,
                 'status' => 'rejected_by_dosen',
-                'notes' => 'Dokumen persyaratan belum lengkap.',
+                'recommendation_letter_file' => null,
+                'acceptance_proof_file' => null,
+                'dosen_notes' => 'Transkrip sementara belum ditandatangani, silakan unggah ulang.',
+                'admin_notes' => null,
             ],
             [
                 'email' => 'salsa@simba.test',
                 'scholarship' => 'Djarum Beasiswa Plus',
                 'gpa' => 3.80,
                 'status' => 'rejected_by_admin',
-                'notes' => 'Tidak lolos seleksi akhir.',
+                'recommendation_letter_file' => null,
+                'acceptance_proof_file' => null,
+                'dosen_notes' => 'Dokumen valid dan direkomendasikan.',
+                'admin_notes' => 'Kuota rekomendasi jurusan untuk periode ini sudah terpenuhi.',
             ],
             [
-                'email' => 'fajar@simba.test',
-                'scholarship' => 'Beasiswa KIP Kuliah',
-                'gpa' => 3.25,
-                'status' => 'pending',
-                'notes' => null,
+                'email' => 'surya@simba.test',
+                'scholarship' => 'Beasiswa Bantuan Pendidikan Kebanksentralan 2026',
+                'gpa' => 3.96,
+                'status' => 'approved_by_admin',
+                'recommendation_letter_file' => 'documents/surat-rekomendasi-surya.pdf',
+                'acceptance_proof_file' => null,
+                'dosen_notes' => 'Memenuhi syarat IPK dan aktif berorganisasi.',
+                'admin_notes' => 'Surat rekomendasi resmi FMIPA telah diterbitkan.',
             ],
             [
-                'email' => 'putri@simba.test',
+                'email' => 'fx@simba.test',
                 'scholarship' => 'Beasiswa Unggulan',
                 'gpa' => 3.95,
-                'status' => 'verified_by_dosen',
-                'notes' => 'Direkomendasikan untuk seleksi akhir.',
+                'status' => 'loa_submitted',
+                'recommendation_letter_file' => 'documents/surat-rekomendasi-fx.pdf',
+                'acceptance_proof_file' => 'documents/loa-fx.pdf',
+                'dosen_notes' => 'Direkomendasikan untuk pengajuan beasiswa.',
+                'admin_notes' => 'Menunggu verifikasi akhir dokumen LoA oleh Admin.',
+            ],
+            [
+                'email' => 'nadia@simba.test',
+                'scholarship' => 'Beasiswa Prestasi Akademik FMIPA',
+                'gpa' => 3.91,
+                'status' => 'awardee_confirmed',
+                'recommendation_letter_file' => 'documents/surat-rekomendasi-nadia.pdf',
+                'acceptance_proof_file' => 'documents/sk-penerima-nadia.pdf',
+                'dosen_notes' => 'Capaian akademik sangat baik.',
+                'admin_notes' => 'SK Penerima valid, status akun ditingkatkan menjadi Awardee.',
+            ],
+            [
+                'email' => 'lestari@simba.test',
+                'scholarship' => 'Djarum Beasiswa Plus',
+                'gpa' => 3.65,
+                'status' => 'awardee_confirmed',
+                'recommendation_letter_file' => 'documents/surat-rekomendasi-lestari.pdf',
+                'acceptance_proof_file' => 'documents/sk-penerima-lestari.pdf',
+                'dosen_notes' => 'Dokumen lengkap dan memenuhi persyaratan.',
+                'admin_notes' => 'Bukti kelolosan terverifikasi, aktif sebagai Awardee.',
             ],
         ];
 
@@ -283,7 +311,7 @@ class DatabaseSeeder extends Seeder
             $user = $mahasiswa[$item['email']];
             $scholarship = $scholarships[$item['scholarship']];
 
-            $application = ScholarshipApplication::updateOrCreate(
+            ScholarshipApplication::updateOrCreate(
                 [
                     'user_id' => $user->id,
                     'scholarship_id' => $scholarship->id,
@@ -291,58 +319,54 @@ class DatabaseSeeder extends Seeder
                 [
                     'gpa_score' => $item['gpa'],
                     'document_file' => 'documents/contoh-berkas.pdf',
-                    'acceptance_proof_file' => $item['status'] === 'approved_by_admin'
-                        ? 'documents/contoh-sk.pdf'
-                        : null,
+                    'recommendation_letter_file' => $item['recommendation_letter_file'],
+                    'acceptance_proof_file' => $item['acceptance_proof_file'],
                     'status' => $item['status'],
-                    'dosen_notes' => $item['notes'],
+                    'dosen_notes' => $item['dosen_notes'],
+                    'admin_notes' => $item['admin_notes'],
                 ]
             );
 
-            if ($item['status'] === 'approved_by_admin') {
+            if ($item['status'] === 'awardee_confirmed') {
                 $user->update(['is_awardee' => true]);
             }
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | EVALUASI KHS
-        |--------------------------------------------------------------------------
-        */
 
         $evaluations = [
             [
                 'email' => 'nadia@simba.test',
                 'scholarship' => 'Beasiswa Prestasi Akademik FMIPA',
-                'semester' => 4,
-                'ips' => 3.85,
-                'status' => 'verified',
+                'semester' => 3,
+                'ips' => 3.88,
+                'ipk' => 3.90,
+                'verification_status' => 'verified',
+                'ews_status' => 'aman',
+                'notes' => 'Prestasi akademik sangat stabil dan di atas syarat minimal.',
             ],
             [
-                'email' => 'ahmad@simba.test',
-                'scholarship' => 'Beasiswa Bank Indonesia',
-                'semester' => 5,
-                'ips' => 3.78,
-                'status' => 'pending',
+                'email' => 'nadia@simba.test',
+                'scholarship' => 'Beasiswa Prestasi Akademik FMIPA',
+                'semester' => 4,
+                'ips' => 3.85,
+                'ipk' => 3.89,
+                'verification_status' => 'pending',
+                'ews_status' => 'aman',
+                'notes' => null,
             ],
             [
                 'email' => 'lestari@simba.test',
                 'scholarship' => 'Djarum Beasiswa Plus',
                 'semester' => 4,
-                'ips' => 3.10,
-                'status' => 'warning',
-            ],
-            [
-                'email' => 'putri@simba.test',
-                'scholarship' => 'Beasiswa Unggulan',
-                'semester' => 5,
-                'ips' => 3.92,
-                'status' => 'verified',
+                'ips' => 3.05,
+                'ipk' => 3.18,
+                'verification_status' => 'verified',
+                'ews_status' => 'warning',
+                'notes' => 'IPK berada sedikit di bawah batas minimal 3.20, disarankan mengikuti konseling akademik bersama Dosen PA.',
             ],
         ];
 
         foreach ($evaluations as $item) {
-            SemesterEvaluation::firstOrCreate(
+            SemesterEvaluation::updateOrCreate(
                 [
                     'user_id' => $mahasiswa[$item['email']]->id,
                     'scholarship_id' => $scholarships[$item['scholarship']]->id,
@@ -350,18 +374,14 @@ class DatabaseSeeder extends Seeder
                 ],
                 [
                     'ips_score' => $item['ips'],
+                    'ipk_score' => $item['ipk'],
                     'khs_file' => 'documents/contoh-khs.pdf',
-                    'status' => $item['status'],
-                    'evaluator_notes' => 'Data evaluasi contoh untuk demonstrasi.',
+                    'verification_status' => $item['verification_status'],
+                    'ews_status' => $item['ews_status'],
+                    'evaluator_notes' => $item['notes'],
                 ]
             );
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | TRACER STUDY ALUMNI
-        |--------------------------------------------------------------------------
-        */
 
         $alumni = [
             [
@@ -369,18 +389,26 @@ class DatabaseSeeder extends Seeder
                 'email' => 'alumni1@simba.test',
                 'nim_nip' => '2017051001',
                 'major' => 'Ilmu Komputer',
+                'phone' => '081270000201',
+                'employment_status' => 'bekerja',
                 'company' => 'PT Teknologi Indonesia',
                 'job' => 'Software Developer',
                 'city' => 'Bandar Lampung',
+                'waiting_months' => 2,
+                'ready_for_sharing' => true,
             ],
             [
                 'name' => 'Alumni Kedua',
                 'email' => 'alumni2@simba.test',
                 'nim_nip' => '2017041002',
                 'major' => 'Fisika',
-                'company' => 'PT Energi Nusantara',
-                'job' => 'Data Analyst',
-                'city' => 'Jakarta',
+                'phone' => '081270000202',
+                'employment_status' => 'studi_lanjut',
+                'company' => 'Institut Teknologi Bandung',
+                'job' => 'Mahasiswa S2 Fisika',
+                'city' => 'Bandung',
+                'waiting_months' => 3,
+                'ready_for_sharing' => true,
             ],
         ];
 
@@ -395,41 +423,42 @@ class DatabaseSeeder extends Seeder
                     'major' => $item['major'],
                     'academic_status' => 'lulus',
                     'is_awardee' => true,
+                    'is_active' => true,
+                    'phone' => $item['phone'],
+                    'avatar' => null,
                     'email_verified_at' => now(),
                 ]
             );
 
-            AlumniTracer::firstOrCreate(
+            AlumniTracer::updateOrCreate(
                 ['user_id' => $user->id],
                 [
+                    'employment_status' => $item['employment_status'],
                     'company_name' => $item['company'],
                     'job_title' => $item['job'],
                     'city' => $item['city'],
-                    'waiting_months' => 2,
-                    'ready_for_sharing' => true,
+                    'waiting_months' => $item['waiting_months'],
+                    'ready_for_sharing' => $item['ready_for_sharing'],
                     'contact_linkedin' => 'https://www.linkedin.com/',
                 ]
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | PENGUMUMAN
-        |--------------------------------------------------------------------------
-        */
-
         $announcements = [
             [
                 'title' => 'Pembukaan Pendaftaran Beasiswa Semester Ganjil 2026/2027',
-                'content' => 'Pendaftaran program beasiswa FMIPA Universitas Lampung telah dibuka. Mahasiswa dapat melihat katalog beasiswa dan melengkapi dokumen persyaratan melalui sistem SIMBA-MIPA.',
+                'content' => 'Pendaftaran program beasiswa FMIPA Universitas Lampung telah dibuka. Silakan periksa katalog beasiswa dan ajukan surat rekomendasi fakultas melalui SIMBA-MIPA.',
+                'target_role' => 'public',
             ],
             [
-                'title' => 'Pengumpulan Berkas Persyaratan Beasiswa',
-                'content' => 'Seluruh mahasiswa yang mendaftar diharapkan memeriksa kembali kelengkapan dokumen sebelum batas akhir pendaftaran.',
+                'title' => 'Batas Akhir Unggah KHS Evaluasi Semester Awardee',
+                'content' => 'Seluruh mahasiswa penerima beasiswa aktif diwajibkan mengunggah KHS semester berjalan beserta capaian IPS dan IPK sebelum akhir bulan.',
+                'target_role' => 'mahasiswa',
             ],
             [
-                'title' => 'Evaluasi Kartu Hasil Studi Awardee',
-                'content' => 'Mahasiswa penerima beasiswa diwajibkan mengunggah KHS sebagai bagian dari evaluasi akademik setiap semester.',
+                'title' => 'Jadwal Verifikasi Rekomendasi dan Pemantauan EWS FMIPA',
+                'content' => 'Kepada Bapak/Ibu Dosen PA dan mahasiswa bimbingan, mohon memastikan verifikasi tahap 1 dan peninjauan status EWS diselesaikan sesuai lini masa semester berjalan.',
+                'target_role' => 'all',
             ],
         ];
 
@@ -438,6 +467,7 @@ class DatabaseSeeder extends Seeder
                 ['title' => $announcement['title']],
                 [
                     'content' => $announcement['content'],
+                    'target_role' => $announcement['target_role'],
                     'is_active' => true,
                     'created_by' => $admin->id,
                 ]

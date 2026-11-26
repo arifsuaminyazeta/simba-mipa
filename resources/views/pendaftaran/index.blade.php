@@ -4,6 +4,12 @@
 
 @section('content')
 <div class="space-y-8">
+    @if(session('success'))
+        <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm">{{ session('success') }}</div>
+    @endif
+    @if($errors->any())
+        <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm">{{ $errors->first() }}</div>
+    @endif
     <!-- Header Halaman -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
@@ -16,83 +22,35 @@
         </a>
     </div>
 
-    <!-- Kartu Tracking Berkas Aktif (Prioritas) -->
-    <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-slate-100">
-            <div>
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
-                        Periode Genap 2026/2027
-                    </span>
-                    <span class="text-xs text-slate-400">Diajukan: 28 Oktober 2026</span>
+    @if($applications->isNotEmpty())
+        @php
+            $activeApplication = $applications->first();
+            $statusLabels = [
+                'pending' => 'Menunggu Verifikasi Dosen PA',
+                'verified_by_dosen' => 'Menunggu Verifikasi Admin',
+                'rejected_by_dosen' => 'Ditolak Dosen PA',
+                'approved_by_admin' => 'Disetujui - Unggah LoA/SK',
+                'rejected_by_admin' => 'Ditolak Admin',
+                'loa_submitted' => 'Menunggu Konfirmasi LoA/SK',
+                'awardee_confirmed' => 'Awardee Terkonfirmasi',
+            ];
+        @endphp
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">Pengajuan Terbaru</span>
+                        <span class="text-xs text-slate-400">Diajukan: {{ $activeApplication->created_at->format('d M Y') }}</span>
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-900">{{ $activeApplication->scholarship->name }}</h2>
+                    <p class="text-xs text-slate-500">IPK saat mendaftar: {{ number_format((float) $activeApplication->gpa_score, 2) }}</p>
                 </div>
-                <h2 class="text-lg font-bold text-slate-900">Beasiswa Bank Indonesia (GenBI)</h2>
-                <p class="text-xs text-slate-500">Nomor Registrasi: <span class="font-mono font-semibold text-slate-700">REG-FMIPA-2026-0042</span></p>
-            </div>
-            <div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                    Menunggu Verifikasi Subbag
+                    {{ $statusLabels[$activeApplication->status] ?? $activeApplication->status }}
                 </span>
             </div>
         </div>
-
-        <!-- Stepper Alur 2 Tingkat -->
-        <div class="pt-6">
-            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-5">Progres Verifikasi Berkas Berjenjang</p>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
-
-                <!-- Step 1: Berkas Diunggah -->
-                <div class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
-                        ✓
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">1. Unggah Berkas</p>
-                        <p class="text-[11px] text-emerald-700 font-medium">Selesai diunggah</p>
-                        <span class="text-[10px] text-slate-400">28 Okt 2026 · 14:20</span>
-                    </div>
-                </div>
-
-                <!-- Step 2: Dosen PA -->
-                <div class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
-                        ✓
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">2. Review Dosen PA</p>
-                        <p class="text-[11px] text-emerald-700 font-medium">Disetujui Dosen PA</p>
-                        <span class="text-[10px] text-slate-400">Dr. Kurniawan, M.Cs.</span>
-                    </div>
-                </div>
-
-                <!-- Step 3: Subbag Kemahasiswaan -->
-                <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-50/70 border border-amber-200">
-                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xs font-bold shrink-0">
-                        3
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">3. Verifikasi Subbag</p>
-                        <p class="text-[11px] text-amber-700 font-medium">Sedang Diperiksa</p>
-                        <span class="text-[10px] text-slate-400">Estimasi: 3 hari kerja</span>
-                    </div>
-                </div>
-
-                <!-- Step 4: Penetapan Final -->
-                <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80 opacity-60">
-                    <div class="w-8 h-8 rounded-xl bg-slate-200 text-slate-500 flex items-center justify-center text-xs font-bold shrink-0">
-                        4
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-800">4. Penetapan Awardee</p>
-                        <p class="text-[11px] text-slate-400">Menunggu Tahap 3</p>
-                        <span class="text-[10px] text-slate-400">Pengumuman SK Dekan</span>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
+    @endif
 
     <!-- Tabel Riwayat Semua Pendaftaran -->
     <div class="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
@@ -101,7 +59,7 @@
                 <h3 class="text-sm font-bold text-slate-800">Riwayat Pengajuan Beasiswa</h3>
                 <p class="text-xs text-slate-400">Daftar semua permohonan beasiswa yang pernah kamu daftarkan.</p>
             </div>
-            <span class="text-xs font-medium text-slate-500">Total 2 Pengajuan</span>
+            <span class="text-xs font-medium text-slate-500">Total {{ $applications->total() }} Pengajuan</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -109,55 +67,65 @@
                 <thead class="bg-slate-50 text-slate-400 font-semibold uppercase tracking-wider text-[10px] border-b border-slate-100">
                     <tr>
                         <th class="px-6 py-3.5">Program Beasiswa</th>
-                        <th class="px-6 py-3.5">Semester Pengajuan</th>
+                        <th class="px-6 py-3.5">IPK Saat Mendaftar</th>
                         <th class="px-6 py-3.5">Tanggal Daftar</th>
                         <th class="px-6 py-3.5">Status Akhir</th>
                         <th class="px-6 py-3.5 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
-                    <!-- Row 1: Aktif -->
-                    <tr class="hover:bg-slate-50/60 transition-colors">
-                        <td class="px-6 py-4">
-                            <p class="font-bold text-slate-900">Beasiswa Bank Indonesia</p>
-                            <p class="text-[11px] text-slate-400">Bantuan Biaya UKT & Pelatihan</p>
-                        </td>
-                        <td class="px-6 py-4 font-medium text-slate-800">Semester 5 (2026/2027)</td>
-                        <td class="px-6 py-4 text-slate-500">28 Oktober 2026</td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                                Proses Verifikasi
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <a href="{{ route('mahasiswa.pendaftaran.show') }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-[11px] hover:bg-slate-50 transition-colors">
-                                Lihat Berkas
-                            </a>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2: Riwayat Lalu -->
-                    <tr class="hover:bg-slate-50/60 transition-colors">
-                        <td class="px-6 py-4">
-                            <p class="font-bold text-slate-900">Djarum Beasiswa Plus</p>
-                            <p class="text-[11px] text-slate-400">Program Prestasi & Softskills</p>
-                        </td>
-                        <td class="px-6 py-4 font-medium text-slate-800">Semester 4 (2025/2026)</td>
-                        <td class="px-6 py-4 text-slate-500">12 Mei 2026</td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Diterima (Selesai)
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <a href="{{ route('mahasiswa.pendaftaran.show') }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-[11px] hover:bg-slate-50 transition-colors">
-                                Arsip Berkas
-                            </a>
-                        </td>
-                    </tr>
+                    @forelse($applications as $application)
+                        @php
+                            $statusLabels = [
+                                'pending' => 'Menunggu Verifikasi Dosen PA',
+                                'verified_by_dosen' => 'Menunggu Verifikasi Admin',
+                                'rejected_by_dosen' => 'Ditolak Dosen PA',
+                                'approved_by_admin' => 'Disetujui - Unggah LoA/SK',
+                                'rejected_by_admin' => 'Ditolak Admin',
+                                'loa_submitted' => 'Menunggu Konfirmasi LoA/SK',
+                                'awardee_confirmed' => 'Awardee Terkonfirmasi',
+                            ];
+                            $statusClasses = in_array($application->status, ['rejected_by_dosen', 'rejected_by_admin'], true)
+                                ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                : (in_array($application->status, ['approved_by_admin', 'awardee_confirmed'], true)
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                    : 'bg-amber-50 text-amber-700 border-amber-200');
+                        @endphp
+                        <tr class="hover:bg-slate-50/60 transition-colors">
+                            <td class="px-6 py-4">
+                                <p class="font-bold text-slate-900">{{ $application->scholarship->name }}</p>
+                                <p class="text-[11px] text-slate-400">{{ $application->scholarship->provider }}</p>
+                            </td>
+                            <td class="px-6 py-4 font-medium text-slate-800">{{ number_format((float) $application->gpa_score, 2) }}</td>
+                            <td class="px-6 py-4 text-slate-500">{{ $application->created_at->format('d M Y') }}</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $statusClasses }}">
+                                    {{ $statusLabels[$application->status] ?? $application->status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right whitespace-nowrap">
+                                <a href="{{ route('mahasiswa.pendaftaran.show', $application) }}" class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-[11px] hover:bg-slate-50 transition-colors">Detail</a>
+                                @if($application->status === 'pending')
+                                    <a href="{{ route('mahasiswa.pendaftaran.edit', $application) }}" class="ml-1 px-3 py-1.5 rounded-lg border border-blue-200 text-blue-700 font-semibold text-[11px]">Ubah</a>
+                                    <form action="{{ route('mahasiswa.pendaftaran.destroy', $application) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="ml-1 px-3 py-1.5 rounded-lg border border-rose-200 text-rose-700 font-semibold text-[11px]" onclick="return confirm('Batalkan pengajuan ini?')">Batalkan</button>
+                                    </form>
+                                @elseif($application->status === 'approved_by_admin')
+                                    <a href="{{ route('mahasiswa.pendaftaran.upload', $application) }}" class="ml-1 px-3 py-1.5 rounded-lg border border-blue-200 text-blue-700 font-semibold text-[11px]">Unggah LoA/SK</a>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-12 text-slate-400">Belum ada pengajuan beasiswa.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+        <div class="p-5">{{ $applications->links() }}</div>
     </div>
 </div>
 @endsection

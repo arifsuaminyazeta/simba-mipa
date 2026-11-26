@@ -30,4 +30,9 @@ class Scholarship extends Model
     {
         return $this->hasMany(ScholarshipApplication::class);
     }
+
+    public function semesterEvaluations(): HasMany
+    {
+        return $this->hasMany(SemesterEvaluation::class);
+    }
 }

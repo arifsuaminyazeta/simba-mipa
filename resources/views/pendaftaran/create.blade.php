@@ -13,7 +13,7 @@
                     Kembali ke Status Pendaftaran
                 </a>
             </div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Formulir Pengajuan Beasiswa</h1>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">{{ isset($application) ? 'Ubah Pengajuan Beasiswa' : 'Formulir Pengajuan Beasiswa' }}</h1>
             <p class="text-xs text-slate-500 mt-0.5">Lengkapi data dan dokumen persyaratan untuk diteruskan ke Dosen PA dan Subbag Kemahasiswaan.</p>
         </div>
         <div class="flex items-center gap-2">
@@ -23,7 +23,20 @@
         </div>
     </div>
 
-    <form action="{{ route('mahasiswa.pendaftaran.index') }}" method="GET" class="space-y-6">
+    @php
+        $isEditing = isset($application);
+        $selectedScholarship = $scholarships->firstWhere('id', old('scholarship_id', $application->scholarship_id ?? null)) ?? $scholarships->first();
+    @endphp
+    <form action="{{ $isEditing ? route('pendaftaran.update', $application) : route('pendaftaran.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        @csrf
+        @if($isEditing)
+            @method('PUT')
+        @endif
+        @if($errors->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm">
+                {{ $errors->first() }}
+            </div>
+        @endif
         <!-- 1. Bagian Identitas Akademik Terverifikasi (Readonly) -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs">
             <div class="flex items-center gap-2.5 pb-4 border-b border-slate-100 mb-5">
@@ -39,27 +52,39 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Nama Lengkap Mahasiswa</label>
-                    <input type="text" value="M. Surya Gymnastyar" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium cursor-not-allowed">
+                    <input type="text" value="{{ auth()->user()->name }}" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium cursor-not-allowed">
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Nomor Pokok Mahasiswa (NPM)</label>
-                    <input type="text" value="2417051000" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-mono font-medium cursor-not-allowed">
+                    <input type="text" value="{{ auth()->user()->nim_nip }}" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-mono font-medium cursor-not-allowed">
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Program Studi</label>
-                    <input type="text" value="S1 Ilmu Komputer" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium cursor-not-allowed">
+                    <input type="text" value="{{ auth()->user()->major }}" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium cursor-not-allowed">
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Semester Aktif</label>
-                    <input type="text" value="Semester 5 (Ganjil 2026/2027)" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium cursor-not-allowed">
+                    <input type="text" value="{{ $latestEvaluation?->semester_ke ? 'Semester '.$latestEvaluation->semester_ke : 'Belum ada data' }}" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 font-medium cursor-not-allowed">
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">IPK Kumulatif Terakhir</label>
-                    <input type="text" value="3.96" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-600 font-bold cursor-not-allowed">
+                    <input
+                        type="{{ $latestGpa !== null ? 'text' : 'number' }}"
+                        name="{{ $latestGpa === null ? 'gpa_score' : '' }}"
+                        value="{{ $latestGpa !== null ? number_format((float) $latestGpa, 2, '.', '') : old('gpa_score', $application->gpa_score ?? '') }}"
+                        min="0" max="4" step="0.01"
+                        {{ $latestGpa !== null ? 'readonly' : 'required' }}
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-600 font-bold {{ $latestGpa !== null ? 'cursor-not-allowed' : '' }}">
+                    @if($latestGpa === null)
+                        <p class="mt-1 text-[10px] text-slate-400">Masukkan IPK sesuai transkrip yang diunggah.</p>
+                    @endif
+                    @error('gpa_score')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-500 mb-1.5">Dosen Pembimbing Akademik (PA)</label>
-                    <input type="text" value="Dr. Kurniawan, M.Cs." readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-blue-700 font-semibold cursor-not-allowed">
+                    <input type="text" value="{{ auth()->user()->academicAdvisor?->name ?? 'Belum ditentukan' }}" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-blue-700 font-semibold cursor-not-allowed">
                 </div>
             </div>
         </div>
@@ -79,24 +104,31 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2">Program Beasiswa yang Dilamar <span class="text-rose-500">*</span></label>
-                    <select class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-800 font-medium">
-                        <option value="bi" selected>Beasiswa Bank Indonesia (GenBI) — Kuota: 30 Mahasiswa</option>
-                        <option value="djarum">Djarum Beasiswa Plus — Kuota: 15 Mahasiswa</option>
-                        <option value="pertamina">Beasiswa Pertamina Sobat Bumi — Kuota: 10 Mahasiswa</option>
+                    <select name="scholarship_id" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-800 font-medium">
+                        @forelse($scholarships as $scholarship)
+                            <option value="{{ $scholarship->id }}" @selected(old('scholarship_id', $application->scholarship_id ?? null) == $scholarship->id)>
+                                {{ $scholarship->name }} — Kuota: {{ $scholarship->quota ?? '-' }} Mahasiswa
+                            </option>
+                        @empty
+                            <option value="">Tidak ada beasiswa yang sedang dibuka</option>
+                        @endforelse
                     </select>
                 </div>
 
                 <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100 text-xs text-blue-800 space-y-1">
                     <p class="font-bold flex items-center gap-1.5">
                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Syarat Khusus Beasiswa Bank Indonesia:
+                        Persyaratan Beasiswa:
                     </p>
                     <ul class="list-disc list-inside text-[11px] text-blue-700 space-y-0.5 ml-1">
-                        <li>IPK minimal 3.00 (skala 4.00)</li>
-                        <li>Telah menyelesaikan minimal 40 SKS</li>
-                        <li>Tidak sedang menerima beasiswa lain dari instansi manapun</li>
+                        <li>IPK minimal {{ $selectedScholarship ? number_format((float) $selectedScholarship->min_gpa, 2) : '-' }} (skala 4.00)</li>
+                        <li>Unggah seluruh dokumen dalam format PDF.</li>
+                        <li>Mahasiswa yang sudah menjadi Awardee tidak dapat mengajukan beasiswa baru.</li>
                     </ul>
                 </div>
+                @error('scholarship_id')
+                    <p class="text-xs text-rose-600">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -123,7 +155,10 @@
                         <label class="cursor-pointer px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-2 transition-all">
                             <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                             <span>Pilih Berkas PDF</span>
-                            <input type="file" accept=".pdf" class="hidden">
+                            @if($isEditing && $application->document_file)
+                                <span class="text-[10px]">{{ basename($application->document_file) }}</span>
+                            @endif
+                            <input type="file" name="document_file" accept=".pdf" {{ $isEditing ? '' : 'required' }} class="hidden">
                         </label>
                     </div>
                 </div>
@@ -143,7 +178,10 @@
                         <label class="cursor-pointer px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-2 transition-all">
                             <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                             <span>Pilih Berkas PDF</span>
-                            <input type="file" accept=".pdf" class="hidden">
+                            @if($isEditing && $application->statement_file)
+                                <span class="text-[10px]">{{ basename($application->statement_file) }}</span>
+                            @endif
+                            <input type="file" name="statement_file" accept=".pdf" {{ $isEditing ? '' : 'required' }} class="hidden">
                         </label>
                     </div>
                 </div>
@@ -158,7 +196,10 @@
                         <label class="cursor-pointer px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-2 transition-all">
                             <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                             <span>Pilih Berkas PDF</span>
-                            <input type="file" accept=".pdf" class="hidden">
+                            @if($isEditing && $application->motivation_file)
+                                <span class="text-[10px]">{{ basename($application->motivation_file) }}</span>
+                            @endif
+                            <input type="file" name="motivation_file" accept=".pdf" {{ $isEditing ? '' : 'required' }} class="hidden">
                         </label>
                     </div>
                 </div>
@@ -168,14 +209,14 @@
         <!-- 4. Pernyataan Kejujuran & Submit -->
         <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <label class="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" required class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                <input type="checkbox" name="declaration" value="1" required class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
                 <span class="text-xs text-slate-600 leading-snug">
                     Saya menyatakan bahwa seluruh berkas yang diunggah adalah sah dan benar. Jika terbukti ada manipulasi, saya bersedia menerima sanksi akademik sesuai aturan FMIPA Unila.
                 </span>
             </label>
 
             <button type="submit" class="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 shadow-sm shadow-blue-200 shrink-0 flex items-center gap-2 transition-all">
-                <span>Kirim Pengajuan</span>
+                <span>{{ $isEditing ? 'Simpan Perubahan' : 'Kirim Pengajuan' }}</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </button>
         </div>

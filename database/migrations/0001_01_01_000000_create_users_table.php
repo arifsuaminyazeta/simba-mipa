@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -17,14 +14,15 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
-            // Kolom kustom untuk SIMBA-MIPA
-            $table->enum('role', ['mahasiswa', 'dosen_pa','admin'])->default('mahasiswa');            
-            $table->string('nim_nip')->nullable()->unique();
-            $table->enum('major', ['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'])->default('Ilmu Komputer');
-            $table->enum('academic_status', ['aktif', 'cuti', 'lulus'])->default('aktif');
+            $table->enum('role', ['admin', 'dosen_pa', 'mahasiswa'])->default('mahasiswa');
+            $table->string('nim_nip', 50)->nullable()->unique();
+            $table->enum('major', ['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'])->nullable();
+            $table->enum('academic_status', ['aktif', 'cuti', 'lulus'])->nullable();
+            $table->boolean('is_awardee')->default(false);
+            $table->boolean('is_active')->default(true);
+            $table->string('phone', 20)->nullable();
+            $table->string('avatar')->nullable();
             $table->foreignId('dosen_pa_id')->nullable()->constrained('users')->nullOnDelete();
-            
             $table->rememberToken();
             $table->timestamps();
         });
@@ -45,9 +43,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

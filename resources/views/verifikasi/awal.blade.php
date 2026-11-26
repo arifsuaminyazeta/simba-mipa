@@ -20,7 +20,7 @@
         </div>
         <div class="bg-white border border-slate-200 rounded-2xl p-5">
             <p class="text-sm text-slate-500">Ditolak</p>
-            <h2 class="text-3xl font-bold text-red-500 mt-2">{{ $countRejected }}</h2>
+            <h2 class="text-3xl font-bold text-rose-600 mt-2">{{ $countRejected }}</h2>
         </div>
     </div>
 
@@ -52,7 +52,7 @@
                                 <p class="text-xs text-slate-400">{{ $item->user->email }}</p>
                             </td>
                             <td class="px-3 py-4 text-slate-600">{{ $item->scholarship->name }}</td>
-                            <td class="px-3 py-4 font-semibold">{{ number_format($item->gpa_score, 2) }}</td>
+                            <td class="px-3 py-4 font-bold text-blue-600">{{ number_format($item->gpa_score, 2) }}</td>
                             <td class="px-3 py-4">
                                 <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">Menunggu</span>
                             </td>

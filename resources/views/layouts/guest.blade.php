@@ -15,7 +15,6 @@
 </head>
 <body class="font-sans antialiased bg-[#f8fafc] text-slate-900 selection:bg-blue-100 selection:text-blue-700 flex flex-col min-h-screen">
 
-    <!-- Top Bar-->
     <div class="bg-blue-700 text-white text-[11px] font-medium py-2 px-6 lg:px-12">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-2">
@@ -28,9 +27,8 @@
         </div>
     </div>
 
-    <!-- Header & Navigasi-->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+        <div class="w-full pl-2 pr-4 lg:pl-3 lg:pr-6 h-20 flex items-center justify-between">
             <a href="{{ url('/') }}" class="flex items-center gap-3">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo SIMBA-MIPA" class="w-11 h-11 object-contain rounded-xl">
                 <div>
@@ -39,7 +37,6 @@
                 </div>
             </a>
 
-            <!-- Navigasi -->
             <nav class="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-600">
                 <a href="{{ url('/') }}" class="hover:text-blue-600 transition-colors {{ request()->is('/') ? 'text-blue-600' : '' }}">
                     Beranda
@@ -55,7 +52,6 @@
                 </a>
             </nav>
 
-            <!-- Tombol Masuk -->
             <div class="flex items-center gap-3">
                 @auth
                     <a href="{{ route(auth()->user()->role === 'admin' ? 'dashboard.admin' : (auth()->user()->role === 'dosen_pa' ? 'dashboard.dosen' : 'dashboard.mahasiswa')) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-xs transition-all">
@@ -79,13 +75,11 @@
         </div>
     </header>
 
-    <!-- Konten Utama -->
     <main class="flex-1 flex flex-col">
         {{ $slot ?? '' }}
         @yield('content')
     </main>
 
-    <!-- Footer Publik -->
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>&copy; {{ date('Y') }} SIMBA-MIPA FMIPA Unila. Hak cipta dilindungi.</p>

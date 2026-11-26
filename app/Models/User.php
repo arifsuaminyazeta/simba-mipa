@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 #[Fillable([
     'name',
     'email',
+    'email_verified_at',
     'password',
     'role',
     'nim_nip',
@@ -21,9 +23,12 @@ use Illuminate\Notifications\Notifiable;
     'academic_status',
     'is_awardee',
     'is_active',
+    'avatar',
     'dosen_pa_id',
 ])]
+
 #[Hidden(['password', 'remember_token'])]
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -36,6 +41,26 @@ class User extends Authenticatable
     public function advisees(): HasMany
     {
         return $this->hasMany(self::class, 'dosen_pa_id');
+    }
+
+    public function scholarshipApplications(): HasMany
+    {
+        return $this->hasMany(ScholarshipApplication::class);
+    }
+
+    public function semesterEvaluations(): HasMany
+    {
+        return $this->hasMany(SemesterEvaluation::class);
+    }
+
+    public function alumniTracer(): HasOne
+    {
+        return $this->hasOne(AlumniTracer::class);
+    }
+
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(Announcement::class, 'created_by');
     }
 
     protected function casts(): array

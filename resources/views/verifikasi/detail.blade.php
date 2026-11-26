@@ -52,14 +52,14 @@
 
             <div>
                 <p class="text-xs text-slate-400">IPK Mahasiswa</p>
-                <p class="font-semibold text-slate-800 mt-1">
+                <p class="font-bold {{ $application->gpa_score >= $application->scholarship->min_gpa ? 'text-emerald-600' : 'text-rose-600' }} mt-1 text-base">
                     {{ number_format($application->gpa_score, 2) }}
                 </p>
             </div>
 
             <div>
                 <p class="text-xs text-slate-400">Minimal IPK Beasiswa</p>
-                <p class="font-semibold text-slate-800 mt-1">
+                <p class="font-bold text-amber-600 mt-1 text-base">
                     {{ number_format($application->scholarship->min_gpa, 2) }}
                 </p>
             </div>
@@ -119,8 +119,36 @@
 
             </div>
 
+            @foreach([
+                'Surat Pernyataan' => $application->statement_file,
+                'Esai Motivasi' => $application->motivation_file,
+                'Surat Rekomendasi Admin' => $application->recommendation_letter_file,
+            ] as $label => $file)
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-50 rounded-xl">
+                    <div>
+                        <p class="font-semibold text-slate-700 text-sm">{{ $label }}</p>
+                    </div>
+                    @if($file)
+                        <a href="{{ asset('storage/'.$file) }}" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold text-center">Lihat Dokumen</a>
+                    @else
+                        <span class="text-xs text-slate-400">Belum tersedia</span>
+                    @endif
+                </div>
+            @endforeach
+
         </div>
 
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6">
+            <h2 class="font-bold text-slate-800 mb-2">Catatan Dosen PA</h2>
+            <p class="text-sm text-slate-600 whitespace-pre-line">{{ $application->dosen_notes ?: 'Belum ada catatan.' }}</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-6">
+            <h2 class="font-bold text-slate-800 mb-2">Catatan Admin</h2>
+            <p class="text-sm text-slate-600 whitespace-pre-line">{{ $application->admin_notes ?: 'Belum ada catatan.' }}</p>
+        </div>
     </div>
 
     @if(auth()->user()->role === 'dosen_pa' && $application->status === 'pending')
@@ -172,26 +200,36 @@
 
     @endif
 
-    @if(auth()->user()->role == 'admin' && $application->status == 'verified_by_dosen')
+    @if(auth()->user()->role == 'admin' && in_array($application->status, ['verified_by_dosen', 'loa_submitted'], true))
 
     <div class="bg-white border border-slate-200 rounded-2xl p-6">
 
-        <h2 class="font-bold text-slate-800 mb-2">Verifikasi Akhir Admin</h2>
+        <h2 class="font-bold text-slate-800 mb-2">{{ $application->status === 'verified_by_dosen' ? 'Verifikasi Rekomendasi Admin' : 'Konfirmasi LoA/SK' }}</h2>
 
         <p class="text-sm text-slate-500 mb-5">
-            Pastikan bukti kelolosan resmi sudah sesuai sebelum menetapkan mahasiswa sebagai Awardee.
+            {{ $application->status === 'verified_by_dosen' ? 'Unggah surat rekomendasi dan simpan keputusan verifikasi.' : 'Periksa bukti kelolosan resmi sebelum menetapkan mahasiswa sebagai Awardee.' }}
         </p>
 
-        <div class="mb-5 p-4 bg-blue-50 border border-blue-100 rounded-xl">
-            <p class="text-sm text-blue-700">
-                Berkas mahasiswa telah melewati verifikasi awal oleh Dosen PA.
-            </p>
-        </div>
+        @if($application->status === 'verified_by_dosen')
+            <div class="mb-5 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                <p class="text-sm text-blue-700">Berkas mahasiswa telah melewati verifikasi awal oleh Dosen PA.</p>
+            </div>
+        @endif
 
         <form action="{{ route('verifikasi.admin', $application->id) }}"
-              method="POST" class="space-y-5">
+              method="POST" enctype="multipart/form-data" class="space-y-5">
 
             @csrf
+
+            @if($application->status === 'verified_by_dosen')
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Surat Rekomendasi (PDF)</label>
+                    <input type="file" name="recommendation_letter_file" accept=".pdf,application/pdf" required class="block w-full text-sm text-slate-600">
+                    @error('recommendation_letter_file')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+            @endif
 
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">
@@ -216,7 +254,7 @@
 
                 <button name="decision" value="approve"
                         class="px-6 py-3 bg-emerald-600 text-white rounded-xl text-sm font-semibold">
-                    Tetapkan Awardee
+                    {{ $application->status === 'verified_by_dosen' ? 'Setujui Pengajuan' : 'Tetapkan Awardee' }}
                 </button>
 
             </div>

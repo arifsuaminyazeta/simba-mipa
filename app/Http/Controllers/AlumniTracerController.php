@@ -74,21 +74,12 @@ class AlumniTracerController extends Controller
         });
 
         $totalResponses = (clone $awardeeAlumni)->count();
-        $employedResponses = (clone $awardeeAlumni)->where(function ($query) {
-            $query->where('employment_status', 'bekerja')
-                ->orWhere(function ($legacyQuery) {
-                    $legacyQuery->whereNull('employment_status')
-                        ->where(function ($filledQuery) {
-                            $filledQuery->whereNotNull('company_name')->where('company_name', '!=', '')
-                                ->orWhere(function ($jobQuery) {
-                                    $jobQuery->whereNotNull('job_title')->where('job_title', '!=', '');
-                                });
-                        });
-                });
-        })->count();
+        $employedResponses = (clone $awardeeAlumni)
+            ->whereIn('employment_status', ['bekerja', 'wirausaha'])
+            ->count();
         $sharingCount = (clone $awardeeAlumni)->where('ready_for_sharing', true)->count();
         $averageWaitingMonths = (clone $awardeeAlumni)
-            ->whereNotNull('waiting_months')
+            ->whereIn('employment_status', ['bekerja', 'wirausaha'])
             ->avg('waiting_months');
 
         $majorBreakdown = AlumniTracer::query()
@@ -287,6 +278,9 @@ class AlumniTracerController extends Controller
             })
             ->when($filters['sharing'] ?? null, function ($query, $sharing) {
                 $query->where('ready_for_sharing', $sharing === 'yes');
+            })
+            ->when($filters['employment_status'] ?? null, function ($query, $status) {
+                $query->where('employment_status', $status);
             });
     }
 

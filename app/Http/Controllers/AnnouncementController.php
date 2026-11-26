@@ -8,26 +8,21 @@ use Illuminate\Validation\Rule;
 
 class AnnouncementController extends Controller
 {
-    private const TARGET_ROLES = ['public', 'all', 'mahasiswa', 'dosen_pa'];
-
     public function index(Request $request)
     {
-        $user = $request->user();
+        $role = $request->user()?->role;
 
         $announcements = Announcement::query()
             ->with('creator')
             ->where('is_active', true)
-            ->when(! $user, function ($query) {
-                $query->where('target_role', 'public');
-            })
-            ->when($user && $user->role === 'mahasiswa', function ($query) {
-                $query->whereIn('target_role', ['public', 'all', 'mahasiswa']);
-            })
-            ->when($user && $user->role === 'dosen_pa', function ($query) {
-                $query->whereIn('target_role', ['public', 'all', 'dosen_pa']);
-            })
-            ->when($user && ! in_array($user->role, ['admin', 'mahasiswa', 'dosen_pa'], true), function ($query) {
-                $query->whereIn('target_role', ['public', 'all']);
+            ->when($role !== 'admin', function ($query) use ($role) {
+                $allowedTargets = match ($role) {
+                    'mahasiswa' => ['public', 'all', 'mahasiswa'],
+                    'dosen_pa' => ['public', 'all', 'dosen_pa'],
+                    default => ['public'],
+                };
+
+                $query->whereIn('target_role', $allowedTargets);
             })
             ->latest()
             ->paginate(10);
@@ -103,7 +98,7 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:20000'],
-            'target_role' => ['required', Rule::in(self::TARGET_ROLES)],
+            'target_role' => ['nullable', Rule::in(['public', 'all', 'mahasiswa', 'dosen_pa'])],
             'is_active' => ['sometimes', 'boolean'],
         ]);
 

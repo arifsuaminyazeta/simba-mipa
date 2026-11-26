@@ -6,15 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('announcements', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('content');
+            $table->enum('target_role', ['public', 'mahasiswa', 'dosen_pa', 'all'])->default('all');
             $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->enum('target_role', ['all', 'admin', 'dosen_pa','mahasiswa'])->default('all');
@@ -22,9 +20,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('announcements');

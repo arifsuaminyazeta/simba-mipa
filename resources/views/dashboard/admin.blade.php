@@ -23,8 +23,8 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Pendaftar</p>
-                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">184</h3>
-                <p class="text-[11px] text-emerald-600 font-semibold mt-1">↑ 12% dari semester lalu</p>
+                <h3 class="text-2xl font-extrabold text-blue-600 mt-1">184</h3>
+                <p class="text-[11px] text-blue-600 font-semibold mt-1">↑ 12% dari semester lalu</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
@@ -34,7 +34,7 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Verifikasi Akhir</p>
-                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">42</h3>
+                <h3 class="text-2xl font-extrabold text-amber-600 mt-1">42</h3>
                 <p class="text-[11px] text-amber-600 font-semibold mt-1">Menunggu approval subbag</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
@@ -46,7 +46,7 @@
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Peringatan EWS</p>
                 <h3 class="text-2xl font-extrabold text-rose-600 mt-1">7</h3>
-                <p class="text-[11px] text-rose-500 font-semibold mt-1">IPK di bawah batas syarat</p>
+                <p class="text-[11px] text-rose-600 font-semibold mt-1">IPK di bawah batas syarat</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -56,8 +56,8 @@
         <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs flex items-center justify-between">
             <div>
                 <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Awardee Aktif</p>
-                <h3 class="text-2xl font-extrabold text-blue-600 mt-1">112</h3>
-                <p class="text-[11px] text-slate-400 font-medium mt-1">Tersebar di 5 Jurusan</p>
+                <h3 class="text-2xl font-extrabold text-indigo-600 mt-1">112</h3>
+                <p class="text-[11px] text-indigo-600 font-medium mt-1">Tersebar di 5 Jurusan</p>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
