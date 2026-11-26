@@ -51,11 +51,13 @@
             margin: 0;
             line-height: 1.25;
         }
-        dialog form {
+        dialog .dialog-scroll > form {
+            box-sizing: border-box;
+            width: 100%;
             margin: 0;
             padding: 18px 24px 0;
         }
-        dialog form > *:first-child {
+        dialog .dialog-scroll > form > *:first-child {
             margin-top: 0;
         }
         dialog form label {
@@ -111,16 +113,47 @@
             flex-direction: column;
             gap: 16px;
             margin: 0;
-            padding: 18px 24px 0;
+            padding: 0;
         }
         dialog.admin-modal form.admin-modal-form > .grid {
             gap: 12px;
+            box-sizing: border-box;
+            width: 100%;
+            padding: 20px 24px 12px;
         }
         dialog.admin-modal .admin-modal-footer {
-            margin: 2px -24px 0;
+            margin: 0;
             padding: 14px 24px 16px;
             border-top: 1px solid #e2e8f0;
             background: #ffffff;
+        }
+        dialog.student-edit-modal .dialog-scroll {
+            width: 100%;
+            overflow-x: hidden;
+        }
+        dialog.student-edit-modal form.admin-modal-form,
+        dialog.student-edit-modal form.admin-modal-form > .grid,
+        dialog.student-edit-modal form.admin-modal-form > .grid > div {
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        dialog.student-edit-modal form.admin-modal-form {
+            width: 100%;
+            gap: 16px;
+            padding: 0;
+        }
+        dialog.student-edit-modal form.admin-modal-form > .student-edit-fields {
+            width: 100%;
+        }
+        dialog.student-edit-modal .admin-modal-footer {
+            margin: 2px -24px 0;
+            padding: 14px 24px 16px;
+        }
+        dialog.student-edit-modal form.admin-modal-form input:not([type="checkbox"]),
+        dialog.student-edit-modal form.admin-modal-form select {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
     </style>
 

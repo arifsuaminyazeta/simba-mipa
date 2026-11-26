@@ -182,7 +182,7 @@
                                 </button>
                             </td>
                         </tr>
-                        <dialog id="student-edit-modal-{{ $student->id }}" class="admin-modal m-auto overflow-hidden rounded-2xl bg-white p-0 text-left shadow-2xl">
+                        <dialog id="student-edit-modal-{{ $student->id }}" class="admin-modal student-edit-modal m-auto overflow-hidden rounded-2xl bg-white p-0 text-left shadow-2xl">
                             <div class="dialog-scroll">
                                 <div class="admin-modal-header sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white">
                                     <div>
@@ -191,11 +191,11 @@
                                     </div>
                                     <button type="button" onclick="document.getElementById('student-edit-modal-{{ $student->id }}').close()" class="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors" aria-label="Tutup">✕</button>
                                 </div>
-                                <form method="POST" action="{{ route('users.students.update', $student) }}" class="admin-modal-form">
+                                <form method="POST" action="{{ route('users.students.update', $student) }}" class="admin-modal-form" style="padding: 0;">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="form_mode" value="edit-student-{{ $student->id }}">
-                                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <div class="student-edit-fields grid grid-cols-1 gap-4 sm:grid-cols-2" style="box-sizing: border-box; width: 100%; padding: 20px 24px 12px;">
                                         <div class="sm:col-span-2">
                                             <label class="mb-1.5 block text-xs font-semibold text-slate-700">Nama lengkap <span class="text-rose-500">*</span></label>
                                             <input type="text" name="name" value="{{ $student->name }}" required maxlength="255" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
@@ -256,7 +256,7 @@
                                             <input type="password" name="password_confirmation" minlength="8" autocomplete="new-password" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
                                         </div>
                                     </div>
-                                    <div class="admin-modal-footer flex items-center justify-end gap-3">
+                                    <div class="admin-modal-footer flex items-center justify-end gap-3" style="margin: 0; padding: 14px 24px 16px;">
                                         <button type="button" onclick="document.getElementById('student-edit-modal-{{ $student->id }}').close()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
                                         <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors shadow-xs">Simpan Perubahan</button>
                                     </div>
@@ -366,13 +366,13 @@
                                     <button type="button" onclick="document.getElementById('lecturer-edit-modal-{{ $lecturer->id }}').close()" class="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors" aria-label="Tutup">✕</button>
                                 </div>
 
-                                <form method="POST" action="{{ route('users.update', $lecturer) }}" class="admin-modal-form">
+                                <form method="POST" action="{{ route('users.update', $lecturer) }}" class="admin-modal-form" style="padding: 0;">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="form_mode" value="edit">
                                     <input type="hidden" name="lecturer_id" value="{{ $lecturer->id }}">
 
-                                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2" style="box-sizing: border-box; width: 100%; padding: 20px 24px 12px;">
                                         <div class="sm:col-span-2">
                                             <label for="edit-name-{{ $lecturer->id }}" class="mb-1.5 block text-xs font-semibold text-slate-700">Nama lengkap <span class="text-rose-500">*</span></label>
                                             <input id="edit-name-{{ $lecturer->id }}" name="name" type="text" required maxlength="255" value="{{ old('lecturer_id') == $lecturer->id ? old('name') : $lecturer->name }}" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
@@ -418,7 +418,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4 mt-4">
+                                    <div class="admin-modal-footer flex items-center justify-end gap-3" style="margin: 0; padding: 14px 24px 16px;">
                                         <button type="button" onclick="document.getElementById('lecturer-edit-modal-{{ $lecturer->id }}').close()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">Batal</button>
                                         <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors shadow-xs">Simpan Perubahan</button>
                                     </div>

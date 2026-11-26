@@ -255,11 +255,11 @@
                                 </div>
                                 <button type="button" onclick="document.getElementById('scholarship-edit-modal-{{ $item->id }}').close()" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Tutup">✕</button>
                             </div>
-                            <form action="{{ route('beasiswa.update', $item) }}" method="POST" class="admin-modal-form">
+                            <form action="{{ route('beasiswa.update', $item) }}" method="POST" class="admin-modal-form" style="padding: 0;">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="form_mode" value="edit-{{ $item->id }}">
-                                <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                <div class="grid grid-cols-1 gap-3 md:grid-cols-2" style="box-sizing: border-box; width: 100%; padding: 20px 24px 12px;">
                                     <div class="md:col-span-2"><label class="mb-1 block text-xs font-semibold text-slate-700">Nama Beasiswa <span class="text-rose-500">*</span></label><input type="text" name="name" value="{{ old('form_mode') === 'edit-'.$item->id ? old('name') : $item->name }}" required class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500"></div>
                                     <div class="md:col-span-2"><label class="mb-1 block text-xs font-semibold text-slate-700">Instansi Penyedia <span class="text-rose-500">*</span></label><input type="text" name="provider" value="{{ old('form_mode') === 'edit-'.$item->id ? old('provider') : $item->provider }}" required class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500"></div>
                                     <div><label class="mb-1 block text-xs font-semibold text-slate-700">Minimal IPK <span class="text-rose-500">*</span></label><input type="number" name="min_gpa" value="{{ old('form_mode') === 'edit-'.$item->id ? old('min_gpa') : $item->min_gpa }}" step="0.01" min="0" max="4" required class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500"></div>
@@ -270,7 +270,7 @@
                                     <div class="md:col-span-2"><label class="mb-1 block text-xs font-semibold text-slate-700">Deskripsi</label><textarea name="description" rows="3" class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500">{{ old('form_mode') === 'edit-'.$item->id ? old('description') : $item->description }}</textarea></div>
                                     <div><label class="mb-1 block text-xs font-semibold text-slate-700">Status</label><select name="status" class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500"><option value="open" @selected((old('form_mode') === 'edit-'.$item->id ? old('status') : $item->status) === 'open')>Dibuka</option><option value="closed" @selected((old('form_mode') === 'edit-'.$item->id ? old('status') : $item->status) === 'closed')>Ditutup</option></select></div>
                                 </div>
-                                <div class="admin-modal-footer flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                                <div class="admin-modal-footer flex flex-col-reverse gap-2 sm:flex-row sm:justify-end" style="margin: 0; padding: 14px 24px 16px;">
                                     <button type="button" onclick="document.getElementById('scholarship-edit-modal-{{ $item->id }}').close()" class="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">Batal</button>
                                     <button type="submit" class="rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white hover:bg-blue-700">Simpan Perubahan</button>
                                 </div>
