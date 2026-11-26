@@ -4,14 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AnnouncementController extends Controller
 {
-    public function index()
+    private const TARGET_ROLES = ['public', 'all', 'mahasiswa', 'dosen_pa'];
+
+    public function index(Request $request)
     {
+        $user = $request->user();
+
         $announcements = Announcement::query()
             ->with('creator')
             ->where('is_active', true)
+            ->when(! $user, function ($query) {
+                $query->where('target_role', 'public');
+            })
+            ->when($user && $user->role === 'mahasiswa', function ($query) {
+                $query->whereIn('target_role', ['public', 'all', 'mahasiswa']);
+            })
+            ->when($user && $user->role === 'dosen_pa', function ($query) {
+                $query->whereIn('target_role', ['public', 'all', 'dosen_pa']);
+            })
+            ->when($user && ! in_array($user->role, ['admin', 'mahasiswa', 'dosen_pa'], true), function ($query) {
+                $query->whereIn('target_role', ['public', 'all']);
+            })
             ->latest()
             ->paginate(10);
 
@@ -79,19 +96,21 @@ class AnnouncementController extends Controller
     }
 
     /**
-     * @return array{title: string, content: string, is_active: bool}
+     * @return array{title: string, content: string, target_role: string, is_active: bool}
      */
     private function validatedData(Request $request): array
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:20000'],
+            'target_role' => ['required', Rule::in(self::TARGET_ROLES)],
             'is_active' => ['sometimes', 'boolean'],
         ]);
 
         return [
             'title' => $validated['title'],
             'content' => $validated['content'],
+            'target_role' => $validated['target_role'] ?? 'public',
             'is_active' => (bool) ($validated['is_active'] ?? false),
         ];
     }

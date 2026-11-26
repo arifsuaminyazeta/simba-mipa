@@ -123,7 +123,7 @@
 
     </div>
 
-    @if(auth()->user()->role == 'dosen' && $application->status == 'pending')
+    @if(auth()->user()->role === 'dosen_pa' && $application->status === 'pending')
 
     <div class="bg-white border border-slate-200 rounded-2xl p-6">
 

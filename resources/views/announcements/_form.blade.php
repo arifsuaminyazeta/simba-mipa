@@ -5,16 +5,31 @@
 </div>
 
 <div>
+    <label for="target_role" class="block text-xs font-semibold text-slate-700 mb-1.5">Target audiens <span class="text-rose-500">*</span></label>
+    @php
+        $selectedTarget = old('target_role', $announcement?->target_role ?? 'public');
+    @endphp
+    <select id="target_role" name="target_role" required class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500 @error('target_role') border-rose-400 @enderror">
+        <option value="public" @selected($selectedTarget === 'public')>Publik (Semua Pengunjung)</option>
+        <option value="all" @selected($selectedTarget === 'all')>Semua Pengguna Login</option>
+        <option value="mahasiswa" @selected($selectedTarget === 'mahasiswa')>Khusus Mahasiswa</option>
+        <option value="dosen_pa" @selected($selectedTarget === 'dosen_pa')>Khusus Dosen PA</option>
+    </select>
+    @error('target_role') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+</div>
+
+<div>
     <label for="content" class="block text-xs font-semibold text-slate-700 mb-1.5">Isi pengumuman <span class="text-rose-500">*</span></label>
     <textarea id="content" name="content" rows="9" required maxlength="20000" class="w-full rounded-xl border-slate-200 text-sm leading-relaxed focus:border-blue-500 focus:ring-blue-500 @error('content') border-rose-400 @enderror" placeholder="Tuliskan detail pengumuman dengan jelas...">{{ old('content', $announcement?->content) }}</textarea>
     @error('content') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
 </div>
 
 <label for="is_active" class="flex items-start gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/70 cursor-pointer">
-    <input id="is_active" name="is_active" type="checkbox" value="1" @checked(old('is_active', $announcement?->is_active ?? true)) class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+    <input type="hidden" name="is_active" value="0">
+    <input id="is_active" name="is_active" type="checkbox" value="1" @checked((bool) old('is_active', $announcement?->is_active ?? true)) class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
     <span>
-        <span class="block text-xs font-semibold text-slate-800">Publikasikan pengumuman</span>
-        <span class="block text-[11px] text-slate-500 mt-0.5">Jika tidak dicentang, pengumuman disimpan sebagai draf dan tidak terlihat di halaman publik.</span>
+        <span class="block text-xs font-semibold text-slate-800">Publikasikan pengumuman (Aktif)</span>
+        <span class="block text-[11px] text-slate-500 mt-0.5">Jika tidak dicentang, pengumuman disimpan sebagai nonaktif/draf dan tidak ditampilkan kepada audiens.</span>
     </span>
 </label>
 

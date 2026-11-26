@@ -17,8 +17,10 @@ use Illuminate\Notifications\Notifiable;
     'role',
     'nim_nip',
     'major',
+    'phone',
     'academic_status',
     'is_awardee',
+    'is_active',
     'dosen_pa_id',
 ])]
 #[Hidden(['password', 'remember_token'])]
@@ -42,6 +44,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_awardee' => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 }

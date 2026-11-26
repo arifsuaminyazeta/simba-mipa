@@ -8,7 +8,7 @@ it('shows tracer study summaries and filters alumni responses', function () {
         'name' => 'Alumni Bekerja',
         'nim_nip' => '111111',
         'major' => 'Ilmu Komputer',
-        'academic_status' => 'alumni',
+        'academic_status' => 'lulus',
         'is_awardee' => true,
     ]);
 

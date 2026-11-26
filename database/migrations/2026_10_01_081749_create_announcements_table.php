@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('content');
             $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+            $table->enum('target_role', ['all', 'admin', 'dosen_pa','mahasiswa'])->default('all');
             $table->timestamps();
         });
     }

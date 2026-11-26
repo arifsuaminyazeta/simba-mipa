@@ -10,7 +10,7 @@ class ScholarshipApplicationController extends Controller
 {
     public function dosenIndex(Request $request)
     {
-        abort_unless($request->user()?->role === 'dosen', 403);
+        abort_unless($request->user()?->role === 'dosen_pa', 403);
 
         $applications = ScholarshipApplication::with(['user', 'scholarship'])
             ->where('status', 'pending')
@@ -48,7 +48,7 @@ class ScholarshipApplicationController extends Controller
 
     public function show(Request $request, ScholarshipApplication $application)
     {
-        abort_unless(in_array($request->user()?->role, ['admin', 'dosen'], true), 403);
+        abort_unless(in_array($request->user()?->role, ['admin', 'dosen_pa'], true), 403);
 
         $application->load(['user', 'scholarship']);
 
@@ -57,7 +57,7 @@ class ScholarshipApplicationController extends Controller
 
     public function verifyByDosen(Request $request, ScholarshipApplication $application)
     {
-        abort_unless($request->user()?->role === 'dosen', 403);
+        abort_unless($request->user()?->role === 'dosen_pa', 403);
         abort_unless($application->status === 'pending', 422);
 
         $data = $request->validate([

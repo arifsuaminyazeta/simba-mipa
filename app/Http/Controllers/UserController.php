@@ -11,12 +11,28 @@ class UserController extends Controller
 {
     private const MAJORS = ['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'];
 
+    private const ACADEMIC_STATUSES = ['aktif', 'cuti', 'lulus'];
+
     public function index(Request $request)
     {
         $this->ensureAdmin($request);
 
+        $filters = $request->validate([
+            'tab' => ['nullable', Rule::in(['dosen_pa', 'mahasiswa'])],
+            'search' => ['nullable', 'string', 'max:100'],
+            'major' => ['nullable', Rule::in(self::MAJORS)],
+            'academic_status' => ['nullable', Rule::in(self::ACADEMIC_STATUSES)],
+        ]);
+
+        $hasStudentFilter = filled($filters['search'] ?? null)
+            || filled($filters['major'] ?? null)
+            || filled($filters['academic_status'] ?? null)
+            || $request->filled('students_page');
+
+        $activeTab = $filters['tab'] ?? ($hasStudentFilter ? 'mahasiswa' : 'dosen_pa');
+
         $lecturers = User::query()
-            ->where('role', 'dosen')
+            ->where('role', 'dosen_pa')
             ->withCount([
                 'advisees as active_advisees_count' => fn ($query) => $query
                     ->where('role', 'mahasiswa')
@@ -24,7 +40,24 @@ class UserController extends Controller
             ])
             ->orderBy('major')
             ->orderBy('name')
-            ->paginate(10);
+            ->paginate(10, ['*'], 'lecturers_page')
+            ->withQueryString();
+
+        $students = User::query()
+            ->where('role', 'mahasiswa')
+            ->with('academicAdvisor')
+            ->when($filters['search'] ?? null, function ($query, string $search) {
+                $query->where(function ($subQuery) use ($search) {
+                    $subQuery->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('nim_nip', 'ilike', "%{$search}%");
+                });
+            })
+            ->when($filters['major'] ?? null, fn ($query, string $major) => $query->where('major', $major))
+            ->when($filters['academic_status'] ?? null, fn ($query, string $status) => $query->where('academic_status', $status))
+            ->orderBy('major')
+            ->orderBy('name')
+            ->paginate(10, ['*'], 'students_page')
+            ->withQueryString();
 
         $activeStudentCount = User::query()
             ->where('role', 'mahasiswa')
@@ -36,13 +69,22 @@ class UserController extends Controller
             ->whereNotNull('dosen_pa_id')
             ->count();
         $unassignedStudentCount = $activeStudentCount - $assignedStudentCount;
+        $totalLecturerCount = User::query()->where('role', 'dosen_pa')->count();
+        $totalStudentCount = User::query()->where('role', 'mahasiswa')->count();
 
-        return view('users.index', compact(
-            'lecturers',
-            'activeStudentCount',
-            'assignedStudentCount',
-            'unassignedStudentCount'
-        ));
+        return view('users.index', [
+            'lecturers' => $lecturers,
+            'students' => $students,
+            'majors' => self::MAJORS,
+            'academicStatuses' => self::ACADEMIC_STATUSES,
+            'filters' => $filters,
+            'activeTab' => $activeTab,
+            'activeStudentCount' => $activeStudentCount,
+            'assignedStudentCount' => $assignedStudentCount,
+            'unassignedStudentCount' => $unassignedStudentCount,
+            'totalLecturerCount' => $totalLecturerCount,
+            'totalStudentCount' => $totalStudentCount,
+        ]);
     }
 
     public function create(Request $request)
@@ -64,13 +106,16 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'nim_nip' => ['required', 'string', 'max:255', 'unique:users,nim_nip'],
             'major' => ['required', Rule::in(self::MAJORS)],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'is_active' => ['sometimes', 'boolean'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         User::create([
             ...$data,
-            'role' => 'dosen',
+            'role' => 'dosen_pa',
             'academic_status' => 'aktif',
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
         return redirect()
@@ -99,6 +144,8 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'nim_nip' => ['required', 'string', 'max:255', Rule::unique('users', 'nim_nip')->ignore($user->id)],
             'major' => ['required', Rule::in(self::MAJORS)],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'is_active' => ['sometimes', 'boolean'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
@@ -106,11 +153,54 @@ class UserController extends Controller
             unset($data['password']);
         }
 
+        $data['is_active'] = $request->boolean('is_active');
+
         $user->update($data);
 
         return redirect()
             ->route('users.index')
             ->with('success', 'Akun Dosen PA berhasil diperbarui.');
+    }
+
+    public function updateAcademicStatus(Request $request, User $user)
+    {
+        $this->ensureAdmin($request);
+        abort_unless($user->role === 'mahasiswa', 404);
+
+        $validated = $request->validate([
+            'academic_status' => ['required', Rule::in(self::ACADEMIC_STATUSES)],
+        ]);
+
+        $user->update([
+            'academic_status' => $validated['academic_status'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', "Status akademik {$user->name} berhasil diubah menjadi {$validated['academic_status']}.");
+    }
+
+    public function toggleActive(Request $request, User $user)
+    {
+        $this->ensureAdmin($request);
+
+        if ($request->user()->id === $user->id) {
+            return redirect()
+                ->back()
+                ->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri.');
+        }
+
+        $newStatus = ! (bool) $user->is_active;
+
+        $user->update([
+            'is_active' => $newStatus,
+        ]);
+
+        $statusLabel = $newStatus ? 'diaktifkan' : 'dinonaktifkan';
+
+        return redirect()
+            ->back()
+            ->with('success', "Akun {$user->name} berhasil {$statusLabel}.");
     }
 
     public function advisees(Request $request, User $dosen)
@@ -180,6 +270,6 @@ class UserController extends Controller
 
     private function ensureLecturer(User $user): void
     {
-        abort_unless($user->role === 'dosen', 404);
+        abort_unless($user->role === 'dosen_pa', 404);
     }
 }

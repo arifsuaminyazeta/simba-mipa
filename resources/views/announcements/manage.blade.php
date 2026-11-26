@@ -3,12 +3,21 @@
 @section('title', 'Kelola Pengumuman')
 
 @section('content')
+@php
+    $roleLabels = [
+        'public' => ['label' => 'Publik', 'class' => 'bg-blue-50 text-blue-700 border-blue-200'],
+        'all' => ['label' => 'Semua Pengguna', 'class' => 'bg-indigo-50 text-indigo-700 border-indigo-200'],
+        'mahasiswa' => ['label' => 'Mahasiswa', 'class' => 'bg-amber-50 text-amber-700 border-amber-200'],
+        'dosen_pa' => ['label' => 'Dosen PA', 'class' => 'bg-purple-50 text-purple-700 border-purple-200'],
+    ];
+@endphp
+
 <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
             <p class="text-[11px] font-bold uppercase tracking-wider text-blue-600">Informasi fakultas</p>
             <h1 class="text-2xl font-bold text-slate-800 tracking-tight mt-1">Kelola Pengumuman</h1>
-            <p class="text-xs text-slate-500 mt-1">Buat, perbarui, dan atur publikasi pengumuman fakultas.</p>
+            <p class="text-xs text-slate-500 mt-1">Buat, perbarui, dan atur target serta publikasi pengumuman fakultas.</p>
         </div>
         <a href="{{ route('announcements.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -27,7 +36,7 @@
         <div class="p-5 border-b border-slate-100 flex items-center justify-between gap-3">
             <div>
                 <h2 class="text-sm font-bold text-slate-800">Daftar Pengumuman</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Pengumuman aktif tampil di halaman publik.</p>
+                <p class="text-xs text-slate-400 mt-0.5">Pengumuman aktif ditampilkan sesuai target audiens masing-masing.</p>
             </div>
             <a href="{{ route('announcements.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Lihat halaman publik &rarr;</a>
         </div>
@@ -37,6 +46,7 @@
                 <thead class="bg-slate-50 text-slate-400 font-semibold uppercase tracking-wider text-[10px] border-b border-slate-100">
                     <tr>
                         <th class="px-6 py-3.5">Pengumuman</th>
+                        <th class="px-5 py-3.5">Target Audiens</th>
                         <th class="px-5 py-3.5">Dibuat oleh</th>
                         <th class="px-5 py-3.5">Tanggal</th>
                         <th class="px-5 py-3.5">Status</th>
@@ -45,18 +55,27 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($announcements as $announcement)
+                        @php
+                            $targetKey = $announcement->target_role ?? 'public';
+                            $badge = $roleLabels[$targetKey] ?? $roleLabels['public'];
+                        @endphp
                         <tr class="hover:bg-slate-50/60 transition-colors">
                             <td class="px-6 py-4 max-w-xl">
                                 <p class="font-bold text-slate-900 text-[13px]">{{ $announcement->title }}</p>
                                 <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 whitespace-pre-line">{{ $announcement->content }}</p>
                             </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="inline-flex px-2.5 py-1 rounded-full border text-[10px] font-bold {{ $badge['class'] }}">
+                                    {{ $badge['label'] }}
+                                </span>
+                            </td>
                             <td class="px-5 py-4 text-slate-600">{{ $announcement->creator?->name ?? 'Pengguna dihapus' }}</td>
                             <td class="px-5 py-4 whitespace-nowrap text-slate-500">{{ $announcement->created_at->format('d M Y') }}</td>
                             <td class="px-5 py-4">
                                 @if($announcement->is_active)
-                                    <span class="inline-flex px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">Terbit</span>
+                                    <span class="inline-flex px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">Aktif</span>
                                 @else
-                                    <span class="inline-flex px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold">Draf</span>
+                                    <span class="inline-flex px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold">Nonaktif</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -78,7 +97,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-14 text-center">
+                            <td colspan="6" class="px-6 py-14 text-center">
                                 <p class="text-sm font-semibold text-slate-700">Belum ada pengumuman</p>
                                 <p class="text-xs text-slate-400 mt-1">Buat pengumuman pertama untuk membagikan informasi fakultas.</p>
                             </td>

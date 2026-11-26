@@ -55,6 +55,24 @@
                 @error('major') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
             </div>
 
+            <div>
+                <label for="phone" class="block text-xs font-semibold text-slate-700 mb-1.5">Nomor Telepon / WhatsApp <span class="text-slate-400 font-normal">(opsional)</span></label>
+                <input id="phone" name="phone" type="tel" maxlength="30" placeholder="08xxxxxxxxxx" value="{{ old('phone', $lecturer?->phone) }}" autocomplete="tel" class="w-full rounded-xl border-slate-200 text-sm focus:border-blue-500 focus:ring-blue-500 @error('phone') border-rose-400 @enderror">
+                @error('phone') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            <div class="sm:col-span-2">
+                <input type="hidden" name="is_active" value="0">
+                <label class="inline-flex items-start gap-3 cursor-pointer">
+                    <input id="is_active" name="is_active" type="checkbox" value="1" @checked((bool) old('is_active', $lecturer ? $lecturer->is_active : true)) class="mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                    <span>
+                        <span class="block text-xs font-semibold text-slate-700">Akun aktif</span>
+                        <span class="block text-[11px] text-slate-400 mt-0.5">Nonaktifkan jika akun Dosen PA sementara tidak diizinkan mengakses portal.</span>
+                    </span>
+                </label>
+                @error('is_active') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+            </div>
+
             <div class="sm:col-span-2 border-t border-slate-100 pt-5">
                 <h2 class="text-xs font-bold text-slate-800">{{ $lecturer ? 'Ubah kata sandi (opsional)' : 'Kata sandi akun' }}</h2>
                 @if($lecturer)

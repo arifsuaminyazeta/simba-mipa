@@ -10,6 +10,7 @@ class Announcement extends Model
     protected $fillable = [
         'title',
         'content',
+        'target_role',
         'is_active',
         'created_by',
     ];

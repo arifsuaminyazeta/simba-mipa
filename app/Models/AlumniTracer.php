@@ -9,6 +9,7 @@ class AlumniTracer extends Model
 {
     protected $fillable = [
         'user_id',
+        'employment_status',
         'company_name',
         'job_title',
         'city',

@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         $dosen = User::updateOrCreate(['email' => 'dosen@simba.test'], [
             'name' => 'Dosen PA',
             'password' => 'password',
-            'role' => 'dosen',
+            'role' => 'dosen_pa',
             'nim_nip' => '198001012005011001',
             'major' => 'Ilmu Komputer',
         ]);

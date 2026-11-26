@@ -17,7 +17,7 @@ Route::get('/', fn() => view('welcome'));
 Route::get('/dashboard', function (Request $request) {
     return match ($request->user()->role) {
         'admin' => redirect()->route('dashboard.admin'),
-        'dosen' => redirect()->route('dashboard.dosen'),
+        'dosen_pa' => redirect()->route('dashboard.dosen'),
         default => redirect()->route('dashboard.mahasiswa'),
     };
 })->middleware('auth')->name('dashboard');
@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
         })->name('admin');
 
         Route::get('/dosen', function (Request $request) {
-            abort_unless($request->user()->role === 'dosen', 403);
+            abort_unless($request->user()->role === 'dosen_pa', 403);
 
             return view('dashboard.dosen');
         })->name('dosen');
@@ -54,25 +54,17 @@ Route::middleware('auth')->group(function () {
             return view('dashboard.mahasiswa');
         })->name('dashboard');
 
-        Route::get('/beasiswa', function () {
-            $scholarships = Scholarship::latest()->paginate(10);
-
-            return view('beasiswa.katalog', compact('scholarships'));
-        })->name('beasiswa.katalog');
+        Route::get('/beasiswa', [ScholarshipController::class, 'catalog'])->name('beasiswa.katalog');
         Route::get('/pendaftaran', fn() => view('pendaftaran.index'))->name('pendaftaran.index');
         Route::get('/pendaftaran/form', fn() => view('pendaftaran.create'))->name('pendaftaran.create');
         Route::get('/pendaftaran/show', fn() => view('pendaftaran.show'))->name('pendaftaran.show');
         Route::get('/akademik/upload-khs', fn() => view('akademik.upload-khs'))->name('akademik.upload');
-        Route::get('/tracer/form', fn() => view('tracer.form'))->name('tracer.form');
+        Route::get('/tracer/form', [AlumniTracerController::class, 'create'])->name('tracer.form');
     });
 });
 
 Route::prefix('beasiswa')->name('beasiswa.')->group(function () {
-    Route::get('/katalog', function () {
-        $scholarships = Scholarship::latest()->paginate(10);
-
-        return view('beasiswa.katalog', compact('scholarships'));
-    })->name('katalog');
+    Route::get('/katalog', [ScholarshipController::class, 'catalog'])->name('katalog');
     Route::get('/show/{scholarship?}', [ScholarshipController::class, 'show'])->name('show');
 
     Route::middleware('auth')->group(function () {
@@ -104,7 +96,7 @@ Route::prefix('verifikasi')->name('verifikasi.')->middleware('auth')->group(func
 
 Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function () {
     Route::get('/monitoring', function (Request $request) {
-        abort_unless($request->user()->role === 'dosen', 403);
+        abort_unless($request->user()->role === 'dosen_pa', 403);
 
         return view('akademik.monitoring-khs');
     })->name('monitoring');
@@ -169,13 +161,10 @@ Route::prefix('akademik')->name('akademik.')->middleware('auth')->group(function
 });
 
 Route::prefix('tracer')->name('tracer.')->group(function () {
-    Route::get('/', fn() => view('tracer.index'))->name('index');
-    Route::get('/form', function (Request $request) {
-        abort_unless($request->user()->role === 'mahasiswa', 403);
-
-        return view('tracer.form');
-    })->middleware('auth')->name('form');
+    Route::get('/', [AlumniTracerController::class, 'publicIndex'])->name('index');
     Route::middleware('auth')->group(function () {
+        Route::get('/form', [AlumniTracerController::class, 'create'])->name('form');
+        Route::post('/form', [AlumniTracerController::class, 'store'])->name('store');
         Route::get('/rekap/export', [AlumniTracerController::class, 'export'])->name('rekap.export');
         Route::get('/rekap', [AlumniTracerController::class, 'index'])->name('rekap');
     });
@@ -200,6 +189,8 @@ Route::prefix('users')->name('users.')->middleware('auth')->group(function () {
     Route::post('/', [UserController::class, 'store'])->name('store');
     Route::get('/{dosen}/advisees', [UserController::class, 'advisees'])->name('advisees');
     Route::put('/{dosen}/advisees', [UserController::class, 'updateAdvisees'])->name('advisees.update');
+    Route::patch('/{user}/academic-status', [UserController::class, 'updateAcademicStatus'])->name('academic-status.update');
+    Route::patch('/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('toggle-active');
     Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
     Route::put('/{user}', [UserController::class, 'update'])->name('update');
 });

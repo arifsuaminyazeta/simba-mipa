@@ -8,8 +8,8 @@
     $isDosen = request()->is('dashboard/dosen*')
             || request()->is('verifikasi/awal*')
             || request()->is('akademik/monitoring*');
-    $role = auth()->user()?->role ?? ($isMahasiswa ? 'mahasiswa' : ($isDosen ? 'dosen' : 'admin'));
-    $role = auth()->user()?->role ?? ($isMahasiswa ? 'mahasiswa' : ($isDosen ? 'dosen' : 'admin'));
+    $role = auth()->user()?->role ?? ($isMahasiswa ? 'mahasiswa' : ($isDosen ? 'dosen_pa' : 'admin'));
+    $role = auth()->user()?->role ?? ($isMahasiswa ? 'mahasiswa' : ($isDosen ? 'dosen_pa' : 'admin'));
 @endphp
 
 <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 min-h-full">
@@ -49,7 +49,7 @@
                 </a>
             </nav>
 
-        @elseif($role === 'dosen')
+        @elseif($role === 'dosen_pa')
             <!-- MENU DOSEN PA -->
             <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Portal Pembimbing Akademik</p>
             <nav class="space-y-1">
@@ -106,15 +106,15 @@
     <!-- Profil User Bawah Sesuai Role -->
     <div class="p-4 border-t border-slate-100 flex items-center justify-between">
         <div class="flex items-center gap-3 overflow-hidden">
-            <div class="w-9 h-9 rounded-xl {{ $role === 'mahasiswa' ? 'bg-emerald-600' : ($role === 'dosen' ? 'bg-indigo-600' : 'bg-blue-600') }} text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-xs">
-                {{ $role === 'mahasiswa' ? 'M' : ($role === 'dosen' ? 'D' : 'A') }}
+            <div class="w-9 h-9 rounded-xl {{ $role === 'mahasiswa' ? 'bg-emerald-600' : ($role === 'dosen_pa' ? 'bg-indigo-600' : 'bg-blue-600') }} text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-xs">
+                {{ $role === 'mahasiswa' ? 'M' : ($role === 'dosen_pa' ? 'D' : 'A') }}
             </div>
             <div class="truncate">
                 <p class="text-xs font-bold text-slate-800 truncate">
-                    {{ auth()->user()?->name ?? ($role === 'mahasiswa' ? 'Mahasiswa' : ($role === 'dosen' ? 'Dosen PA' : 'Subbag Kemahasiswaan')) }}
+                    {{ auth()->user()?->name ?? ($role === 'mahasiswa' ? 'Mahasiswa' : ($role === 'dosen_pa' ? 'Dosen PA' : 'Subbag Kemahasiswaan')) }}
                 </p>
                 <p class="text-[10px] text-slate-400 font-medium truncate">
-                    {{ auth()->user()?->nim_nip ? auth()->user()->nim_nip.' · '.(auth()->user()->major ?? '') : ($role === 'mahasiswa' ? 'Mahasiswa' : ($role === 'dosen' ? 'Dosen PA' : 'Admin Fakultas MIPA')) }}
+                    {{ auth()->user()?->nim_nip ? auth()->user()->nim_nip.' · '.(auth()->user()->major ?? '') : ($role === 'mahasiswa' ? 'Mahasiswa' : ($role === 'dosen_pa' ? 'Dosen PA' : 'Admin Fakultas MIPA')) }}
                 </p>
             </div>
         </div>

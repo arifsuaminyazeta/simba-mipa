@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Administrator SIMBA',
                 'password' => 'Admin12345',
                 'role' => 'admin',
-                'nim_nip' => '100000001',
+                'nim_nip' => '000000000',
                 'major' => 'Admin',
                 'academic_status' => 'aktif',
                 'is_awardee' => false,
@@ -45,8 +45,8 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Dr. Budi Santoso, M.Kom',
                 'password' => 'password',
-                'role' => 'dosen',
-                'nim_nip' => '198001012005011001',
+                'role' => 'dosen_pa',
+                'nim_nip' => '198001012005011002',
                 'major' => 'Ilmu Komputer',
                 'academic_status' => 'aktif',
                 'email_verified_at' => now(),
@@ -58,8 +58,8 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Dr. Siti Rahmawati, M.Si',
                 'password' => 'password',
-                'role' => 'dosen',
-                'nim_nip' => '198502022010012002',
+                'role' => 'dosen_pa',
+                'nim_nip' => '198502022010012012',
                 'major' => 'Matematika',
                 'academic_status' => 'aktif',
                 'email_verified_at' => now(),
@@ -393,8 +393,8 @@ class DatabaseSeeder extends Seeder
                     'role' => 'mahasiswa',
                     'nim_nip' => $item['nim_nip'],
                     'major' => $item['major'],
-                    'academic_status' => 'alumni',
-                    'is_awardee' => false,
+                    'academic_status' => 'lulus',
+                    'is_awardee' => true,
                     'email_verified_at' => now(),
                 ]
             );

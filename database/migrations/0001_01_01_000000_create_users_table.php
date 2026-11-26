@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('password');
             
             // Kolom kustom untuk SIMBA-MIPA
-            $table->enum('role', ['mahasiswa', 'dosen', 'admin'])->default('mahasiswa');
+            $table->enum('role', ['mahasiswa', 'dosen_pa','admin'])->default('mahasiswa');            
             $table->string('nim_nip')->nullable()->unique();
-            $table->enum('major', ['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi', 'Admin'])->default('Ilmu Komputer');
-            $table->enum('academic_status', ['aktif', 'alumni'])->default('aktif');
+            $table->enum('major', ['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'])->default('Ilmu Komputer');
+            $table->enum('academic_status', ['aktif', 'cuti', 'lulus'])->default('aktif');
             $table->foreignId('dosen_pa_id')->nullable()->constrained('users')->nullOnDelete();
             
             $table->rememberToken();
