@@ -3,12 +3,21 @@
 @section('title', 'Kelola Pengumuman')
 
 @section('content')
+@php
+    $roleLabels = [
+        'public' => ['label' => 'Publik', 'class' => 'bg-blue-50 text-blue-700 border-blue-200'],
+        'all' => ['label' => 'Semua Pengguna', 'class' => 'bg-indigo-50 text-indigo-700 border-indigo-200'],
+        'mahasiswa' => ['label' => 'Mahasiswa', 'class' => 'bg-amber-50 text-amber-700 border-amber-200'],
+        'dosen_pa' => ['label' => 'Dosen PA', 'class' => 'bg-purple-50 text-purple-700 border-purple-200'],
+    ];
+@endphp
+
 <div class="space-y-6">
     <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <p class="text-[11px] font-bold uppercase tracking-wider text-blue-600">Informasi fakultas</p>
-            <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-800">Kelola Pengumuman</h1>
-            <p class="mt-1 text-xs text-slate-500">Buat, perbarui, dan atur publikasi pengumuman fakultas.</p>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight mt-1">Kelola Pengumuman</h1>
+            <p class="text-xs text-slate-500 mt-1">Buat, perbarui, dan atur target serta publikasi pengumuman fakultas.</p>
         </div>
         <button type="button" onclick="document.getElementById('announcement-create-modal').showModal()" class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -27,7 +36,7 @@
         <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
             <div>
                 <h2 class="text-sm font-bold text-slate-800">Daftar Pengumuman</h2>
-                <p class="mt-1 text-xs text-slate-400">Pengumuman aktif tampil di halaman publik.</p>
+                <p class="text-xs text-slate-400 mt-0.5">Pengumuman aktif ditampilkan sesuai target audiens masing-masing.</p>
             </div>
             <a href="{{ route('announcements.index') }}" class="shrink-0 text-xs font-semibold text-blue-600 hover:text-blue-700">Lihat halaman publik &rarr;</a>
         </div>
@@ -37,6 +46,7 @@
                 <thead class="border-b border-slate-100 bg-slate-50 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                     <tr>
                         <th class="px-6 py-3.5">Pengumuman</th>
+                        <th class="px-5 py-3.5">Target Audiens</th>
                         <th class="px-5 py-3.5">Dibuat oleh</th>
                         <th class="px-5 py-3.5">Tanggal</th>
                         <th class="px-5 py-3.5">Status</th>
@@ -45,18 +55,27 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($announcements as $announcement)
-                        <tr class="transition-colors hover:bg-slate-50/60">
-                            <td class="max-w-xl px-6 py-4">
-                                <p class="text-[13px] font-bold text-slate-900">{{ $announcement->title }}</p>
-                                <p class="mt-1 whitespace-pre-line text-[11px] text-slate-500">{{ \Illuminate\Support\Str::limit($announcement->content, 140) }}</p>
+                        @php
+                            $targetKey = $announcement->target_role ?? 'public';
+                            $badge = $roleLabels[$targetKey] ?? $roleLabels['public'];
+                        @endphp
+                        <tr class="hover:bg-slate-50/60 transition-colors">
+                            <td class="px-6 py-4 max-w-xl">
+                                <p class="font-bold text-slate-900 text-[13px]">{{ $announcement->title }}</p>
+                                <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 whitespace-pre-line">{{ $announcement->content }}</p>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="inline-flex px-2.5 py-1 rounded-full border text-[10px] font-bold {{ $badge['class'] }}">
+                                    {{ $badge['label'] }}
+                                </span>
                             </td>
                             <td class="px-5 py-4 text-slate-600">{{ $announcement->creator?->name ?? 'Pengguna dihapus' }}</td>
                             <td class="whitespace-nowrap px-5 py-4 text-slate-500">{{ $announcement->created_at->format('d M Y') }}</td>
                             <td class="px-5 py-4">
                                 @if($announcement->is_active)
-                                    <span class="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">Terbit</span>
+                                    <span class="inline-flex px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">Aktif</span>
                                 @else
-                                    <span class="inline-flex rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600">Draf</span>
+                                    <span class="inline-flex px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold">Nonaktif</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -75,7 +94,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-14 text-center">
+                            <td colspan="6" class="px-6 py-14 text-center">
                                 <p class="text-sm font-semibold text-slate-700">Belum ada pengumuman</p>
                                 <p class="mt-1 text-xs text-slate-400">Buat pengumuman pertama untuk membagikan informasi fakultas.</p>
                             </td>

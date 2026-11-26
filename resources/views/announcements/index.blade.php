@@ -1,8 +1,17 @@
-@extends('layouts.guest')
+@extends(auth()->check() ? 'layouts.app' : 'layouts.guest')
 
 @section('title', 'Pengumuman Fakultas')
 
 @section('content')
+@php
+    $roleLabels = [
+        'public' => ['label' => 'Publik', 'class' => 'bg-blue-50 text-blue-700 border-blue-200/70'],
+        'all' => ['label' => 'Semua Pengguna', 'class' => 'bg-indigo-50 text-indigo-700 border-indigo-200/70'],
+        'mahasiswa' => ['label' => 'Mahasiswa', 'class' => 'bg-amber-50 text-amber-700 border-amber-200/70'],
+        'dosen_pa' => ['label' => 'Dosen PA', 'class' => 'bg-purple-50 text-purple-700 border-purple-200/70'],
+    ];
+@endphp
+
 <div class="w-full">
     <section class="bg-white border-b border-slate-200/80 py-10">
         <div class="max-w-7xl mx-auto px-6 lg:px-12">
@@ -20,10 +29,27 @@
     <section class="max-w-7xl mx-auto px-6 lg:px-12 py-10">
         <div class="space-y-4">
             @forelse($announcements as $announcement)
+                @php
+                    $targetKey = $announcement->target_role ?? 'public';
+                    $badge = $roleLabels[$targetKey] ?? $roleLabels['public'];
+                @endphp
                 <article class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs hover:border-blue-300 transition-all">
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
-                        <span class="inline-flex self-start px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">Pengumuman Fakultas</span>
-                        <span class="text-[11px] text-slate-400">{{ $announcement->created_at->format('d F Y') }} · {{ $announcement->creator?->name ?? 'FMIPA' }}</span>
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
+                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $badge['class'] }}">
+                            {{ $badge['label'] }}
+                        </span>
+                        @if($announcement->is_active)
+                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+                                Aktif
+                            </span>
+                        @else
+                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                Nonaktif
+                            </span>
+                        @endif
+                        <span class="text-[11px] text-slate-400">
+                            {{ $announcement->created_at->format('d F Y') }} · {{ $announcement->creator?->name ?? 'Admin FMIPA' }}
+                        </span>
                     </div>
                     <h2 class="text-base font-bold text-slate-900">{{ $announcement->title }}</h2>
                     <p class="text-xs text-slate-600 leading-relaxed whitespace-pre-line mt-2">{{ $announcement->content }}</p>
@@ -34,7 +60,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"/></svg>
                     </div>
                     <p class="text-sm font-semibold text-slate-700">Belum ada pengumuman</p>
-                    <p class="text-xs text-slate-400 mt-1">Pengumuman fakultas yang telah diterbitkan akan tampil di sini.</p>
+                    <p class="text-xs text-slate-400 mt-1">Pengumuman yang telah diterbitkan untuk peran Anda akan tampil di sini.</p>
                 </div>
             @endforelse
         </div>

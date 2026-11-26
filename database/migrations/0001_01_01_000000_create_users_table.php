@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'dosen_pa', 'mahasiswa'])->default('mahasiswa');
             $table->string('nim_nip', 50)->nullable()->unique();
             $table->enum('major', ['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'])->nullable();
-            $table->enum('academic_status', ['aktif', 'lulus'])->nullable();
+            $table->enum('academic_status', ['aktif', 'cuti', 'lulus'])->nullable();
             $table->boolean('is_awardee')->default(false);
             $table->boolean('is_active')->default(true);
             $table->string('phone', 20)->nullable();

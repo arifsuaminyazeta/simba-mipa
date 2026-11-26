@@ -136,6 +136,13 @@
                 Filter
             </button>
 
+            @if(request('search') || request('status'))
+                <a href="{{ route('beasiswa.index') }}"
+                   class="inline-flex items-center justify-center px-4 py-3 border border-slate-200 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-50">
+                    Reset
+                </a>
+            @endif
+
         </form>
 
         <div class="overflow-x-auto">
@@ -146,7 +153,7 @@
                         <th class="py-4 px-3">Nama Beasiswa</th>
                         <th class="py-4 px-3">Penyedia</th>
                         <th class="py-4 px-3">Minimal IPK</th>
-                        <th class="py-4 px-3">Kuota</th>
+                        <th class="py-4 px-3">Sisa Kuota</th>
                         <th class="py-4 px-3">Periode</th>
                         <th class="py-4 px-3">Status</th>
                         <th class="py-4 px-3 text-center">Aksi</th>
@@ -156,14 +163,24 @@
                 <tbody class="divide-y divide-slate-100">
 
                     @forelse($scholarships as $item)
+                    @php
+                        $awardeesCount = (int) ($item->awardees_count ?? 0);
+                        $dynamicRemaining = $item->quota !== null ? max(0, $item->quota - $awardeesCount) : null;
+                    @endphp
                     <tr class="hover:bg-slate-50">
 
                         <td class="py-4 px-3 text-slate-500">
                             {{ $scholarships->firstItem() + $loop->index }}
                         </td>
 
-                        <td class="py-4 px-3 font-semibold text-slate-800">
-                            {{ $item->name }}
+                        <td class="py-4 px-3">
+                            <p class="font-semibold text-slate-800">{{ $item->name }}</p>
+                            @if($item->registration_url)
+                                <a href="{{ $item->registration_url }}" target="_blank" rel="noopener noreferrer"
+                                   class="text-xs text-blue-600 hover:underline">
+                                    Portal pendaftaran ↗
+                                </a>
+                            @endif
                         </td>
 
                         <td class="py-4 px-3 text-slate-600">
@@ -175,8 +192,13 @@
                         </td>
 
                         <td class="py-4 px-3">
-                            <span class="font-semibold">{{ $item->remaining_quota }}</span>
-                            <span class="text-slate-400">/ {{ $item->quota }}</span>
+                            @if($item->quota === null)
+                                <span class="font-semibold text-slate-700">Tanpa batas</span>
+                            @else
+                                <span class="font-semibold text-slate-800">{{ $dynamicRemaining }}</span>
+                                <span class="text-slate-400">/ {{ $item->quota }}</span>
+                            @endif
+                            <p class="text-[11px] text-slate-400 mt-0.5">{{ $item->applications_count ?? 0 }} pendaftar</p>
                         </td>
 
                         <td class="py-4 px-3 text-xs text-slate-500">

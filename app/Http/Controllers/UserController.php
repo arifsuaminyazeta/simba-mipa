@@ -11,9 +11,25 @@ class UserController extends Controller
 {
     private const MAJORS = ['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'];
 
+    private const ACADEMIC_STATUSES = ['aktif', 'cuti', 'lulus'];
+
     public function index(Request $request)
     {
         $this->ensureAdmin($request);
+
+        $filters = $request->validate([
+            'tab' => ['nullable', Rule::in(['dosen_pa', 'mahasiswa'])],
+            'search' => ['nullable', 'string', 'max:100'],
+            'major' => ['nullable', Rule::in(self::MAJORS)],
+            'academic_status' => ['nullable', Rule::in(self::ACADEMIC_STATUSES)],
+        ]);
+
+        $hasStudentFilter = filled($filters['search'] ?? null)
+            || filled($filters['major'] ?? null)
+            || filled($filters['academic_status'] ?? null)
+            || $request->filled('students_page');
+
+        $activeTab = $filters['tab'] ?? ($hasStudentFilter ? 'mahasiswa' : 'dosen_pa');
 
         $lecturers = User::query()
             ->where('role', 'dosen_pa')
@@ -24,7 +40,24 @@ class UserController extends Controller
             ])
             ->orderBy('major')
             ->orderBy('name')
-            ->paginate(10);
+            ->paginate(10, ['*'], 'lecturers_page')
+            ->withQueryString();
+
+        $students = User::query()
+            ->where('role', 'mahasiswa')
+            ->with('academicAdvisor')
+            ->when($filters['search'] ?? null, function ($query, string $search) {
+                $query->where(function ($subQuery) use ($search) {
+                    $subQuery->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('nim_nip', 'ilike', "%{$search}%");
+                });
+            })
+            ->when($filters['major'] ?? null, fn ($query, string $major) => $query->where('major', $major))
+            ->when($filters['academic_status'] ?? null, fn ($query, string $status) => $query->where('academic_status', $status))
+            ->orderBy('major')
+            ->orderBy('name')
+            ->paginate(10, ['*'], 'students_page')
+            ->withQueryString();
 
         $activeStudentCount = User::query()
             ->where('role', 'mahasiswa')
@@ -36,6 +69,8 @@ class UserController extends Controller
             ->whereNotNull('dosen_pa_id')
             ->count();
         $unassignedStudentCount = $activeStudentCount - $assignedStudentCount;
+        $totalLecturerCount = User::query()->where('role', 'dosen_pa')->count();
+        $totalStudentCount = User::query()->where('role', 'mahasiswa')->count();
 
         $studentQuery = User::query()
             ->where('role', 'mahasiswa')
@@ -211,6 +246,47 @@ class UserController extends Controller
         return redirect()
             ->route('users.index')
             ->with('success', 'Akun Dosen PA berhasil diperbarui.');
+    }
+
+    public function updateAcademicStatus(Request $request, User $user)
+    {
+        $this->ensureAdmin($request);
+        abort_unless($user->role === 'mahasiswa', 404);
+
+        $validated = $request->validate([
+            'academic_status' => ['required', Rule::in(self::ACADEMIC_STATUSES)],
+        ]);
+
+        $user->update([
+            'academic_status' => $validated['academic_status'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', "Status akademik {$user->name} berhasil diubah menjadi {$validated['academic_status']}.");
+    }
+
+    public function toggleActive(Request $request, User $user)
+    {
+        $this->ensureAdmin($request);
+
+        if ($request->user()->id === $user->id) {
+            return redirect()
+                ->back()
+                ->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri.');
+        }
+
+        $newStatus = ! (bool) $user->is_active;
+
+        $user->update([
+            'is_active' => $newStatus,
+        ]);
+
+        $statusLabel = $newStatus ? 'diaktifkan' : 'dinonaktifkan';
+
+        return redirect()
+            ->back()
+            ->with('success', "Akun {$user->name} berhasil {$statusLabel}.");
     }
 
     public function advisees(Request $request, User $dosen)

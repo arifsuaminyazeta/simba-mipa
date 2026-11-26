@@ -15,6 +15,7 @@ return new class extends Migration
             $table->enum('target_role', ['public', 'mahasiswa', 'dosen_pa', 'all'])->default('all');
             $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+            $table->enum('target_role', ['all', 'admin', 'dosen_pa','mahasiswa'])->default('all');
             $table->timestamps();
         });
     }

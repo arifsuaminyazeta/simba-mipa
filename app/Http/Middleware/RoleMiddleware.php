@@ -13,11 +13,11 @@ class RoleMiddleware
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login');
         }
 
-        if (!$user->is_active) {
+        if (! $user->is_active) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -27,7 +27,7 @@ class RoleMiddleware
             ]);
         }
 
-        if (!empty($roles) && !in_array($user->role, $roles, true)) {
+        if (! empty($roles) && ! in_array($user->role, $roles, true)) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

@@ -106,14 +106,21 @@
                 <p class="text-xs text-slate-400 mt-0.5">Kontak hanya ditampilkan untuk alumni yang bersedia menjadi narasumber.</p>
             </div>
             <div class="flex flex-col lg:flex-row gap-2">
-            <form method="GET" action="{{ route('tracer.rekap') }}" class="flex flex-col sm:flex-row gap-2">
+            <form method="GET" action="{{ route('tracer.rekap') }}" class="flex flex-col sm:flex-row flex-wrap gap-2">
                 <label class="sr-only" for="search">Cari alumni atau pekerjaan</label>
-                <input id="search" type="search" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari nama, NIM, pekerjaan..." class="w-full sm:w-56 rounded-xl border-slate-200 text-xs focus:border-blue-500 focus:ring-blue-500">
+                <input id="search" type="search" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari nama, NIM, pekerjaan..." class="w-full sm:w-52 rounded-xl border-slate-200 text-xs focus:border-blue-500 focus:ring-blue-500">
                 <label class="sr-only" for="major">Filter jurusan</label>
                 <select id="major" name="major" class="rounded-xl border-slate-200 text-xs focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Semua jurusan</option>
-                    @foreach(['Ilmu Komputer', 'Matematika', 'Fisika', 'Kimia', 'Biologi'] as $major)
+                    @foreach($majors as $major)
                         <option value="{{ $major }}" @selected(($filters['major'] ?? '') === $major)>{{ $major }}</option>
+                    @endforeach
+                </select>
+                <label class="sr-only" for="employment_status">Filter status aktivitas</label>
+                <select id="employment_status" name="employment_status" class="rounded-xl border-slate-200 text-xs focus:border-blue-500 focus:ring-blue-500">
+                    <option value="">Semua status aktivitas</option>
+                    @foreach($employmentStatuses as $value => $label)
+                        <option value="{{ $value }}" @selected(($filters['employment_status'] ?? '') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
                 <label class="sr-only" for="sharing">Filter kesediaan berbagi</label>
@@ -123,11 +130,11 @@
                     <option value="no" @selected(($filters['sharing'] ?? '') === 'no')>Belum bersedia</option>
                 </select>
                 <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors">Terapkan</button>
-                @if(($filters['search'] ?? null) || ($filters['major'] ?? null) || ($filters['sharing'] ?? null))
+                @if(($filters['search'] ?? null) || ($filters['major'] ?? null) || ($filters['employment_status'] ?? null) || ($filters['sharing'] ?? null))
                     <a href="{{ route('tracer.rekap') }}" class="inline-flex items-center justify-center px-3 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50">Reset</a>
                 @endif
             </form>
-            <a href="{{ route('tracer.rekap.export', request()->only(['search', 'major', 'sharing'])) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition-colors">
+            <a href="{{ route('tracer.rekap.export', request()->only(['search', 'major', 'employment_status', 'sharing'])) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h10l4 4v12a2 2 0 01-2 2z"/></svg>
                 Ekspor CSV
             </a>
@@ -139,7 +146,8 @@
                 <thead class="bg-slate-50 text-slate-400 font-semibold uppercase tracking-wider text-[10px] border-b border-slate-100">
                     <tr>
                         <th class="px-6 py-3.5">Alumni</th>
-                        <th class="px-6 py-3.5">Pekerjaan</th>
+                        <th class="px-5 py-3.5">Status Aktivitas</th>
+                        <th class="px-6 py-3.5">Pekerjaan / Instansi</th>
                         <th class="px-5 py-3.5">Lokasi</th>
                         <th class="px-5 py-3.5 text-center">Waktu Tunggu</th>
                         <th class="px-5 py-3.5">Kesediaan Berbagi</th>
@@ -147,9 +155,19 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
+                    @php
+                        $statusBadgeClasses = [
+                            'bekerja' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                            'studi_lanjut' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                            'wirausaha' => 'bg-amber-50 text-amber-700 border-amber-200',
+                            'mencari_kerja' => 'bg-slate-100 text-slate-600 border-slate-200',
+                        ];
+                    @endphp
                     @forelse($tracers as $tracer)
                         @php
-                            $isEmployed = filled($tracer->company_name) || filled($tracer->job_title);
+                            $statusKey = $tracer->employment_status;
+                            $statusLabel = $employmentStatuses[$statusKey] ?? 'Belum diisi';
+                            $statusClass = $statusBadgeClasses[$statusKey] ?? 'bg-slate-100 text-slate-600 border-slate-200';
                             $linkedinHost = $tracer->contact_linkedin ? parse_url($tracer->contact_linkedin, PHP_URL_HOST) : null;
                             $linkedinScheme = $tracer->contact_linkedin ? parse_url($tracer->contact_linkedin, PHP_URL_SCHEME) : null;
                             $linkedinUrl = $linkedinScheme === 'https'
@@ -162,16 +180,19 @@
                                 <p class="font-bold text-slate-900 text-[13px]">{{ $tracer->user->name }}</p>
                                 <p class="text-[11px] text-slate-400 mt-0.5">{{ $tracer->user->nim_nip ?: 'NIM belum tersedia' }} · {{ $tracer->user->major }}</p>
                             </td>
+                            <td class="px-5 py-4">
+                                <span class="inline-flex px-2.5 py-1 rounded-full border text-[10px] font-semibold {{ $statusClass }}">{{ $statusLabel }}</span>
+                            </td>
                             <td class="px-6 py-4">
                                 <p class="font-semibold text-slate-800">{{ $tracer->job_title ?: 'Pekerjaan belum diisi' }}</p>
                                 <p class="text-[11px] text-slate-400 mt-0.5">{{ $tracer->company_name ?: 'Tempat kerja belum diisi' }}</p>
                             </td>
                             <td class="px-5 py-4 text-slate-600">{{ $tracer->city ?: '—' }}</td>
                             <td class="px-5 py-4 text-center">
-                                @if($isEmployed)
+                                @if($tracer->waiting_months !== null)
                                     <span class="inline-flex px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold">{{ $tracer->waiting_months }} bulan</span>
                                 @else
-                                    <span class="text-slate-400">Belum bekerja</span>
+                                    <span class="text-slate-400">—</span>
                                 @endif
                             </td>
                             <td class="px-5 py-4">
@@ -200,7 +221,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-14 text-center">
+                            <td colspan="7" class="px-6 py-14 text-center">
                                 <div class="mx-auto w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857"/></svg>
                                 </div>

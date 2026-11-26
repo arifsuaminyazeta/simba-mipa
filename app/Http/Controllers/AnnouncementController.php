@@ -90,6 +90,9 @@ class AnnouncementController extends Controller
             ->with('success', 'Pengumuman berhasil dihapus.');
     }
 
+    /**
+     * @return array{title: string, content: string, target_role: string, is_active: bool}
+     */
     private function validatedData(Request $request): array
     {
         $validated = $request->validate([

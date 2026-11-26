@@ -19,10 +19,10 @@ use Illuminate\Notifications\Notifiable;
     'role',
     'nim_nip',
     'major',
+    'phone',
     'academic_status',
     'is_awardee',
     'is_active',
-    'phone',
     'avatar',
     'dosen_pa_id',
 ])]

@@ -6,7 +6,7 @@ it('allows administrators to create lecturers and map active students', function
     $admin = User::factory()->create(['role' => 'admin']);
     $lecturer = User::factory()->create([
         'name' => 'Dosen Pembimbing',
-        'role' => 'dosen',
+        'role' => 'dosen_pa',
         'major' => 'Ilmu Komputer',
     ]);
     $student = User::factory()->create([
@@ -38,7 +38,7 @@ it('allows administrators to create lecturers and map active students', function
         ->assertRedirect(route('users.index'));
 
     $createdLecturer = User::query()->where('email', 'dosen.baru@example.test')->firstOrFail();
-    expect($createdLecturer->role)->toBe('dosen');
+    expect($createdLecturer->role)->toBe('dosen_pa');
 
     $this->actingAs($admin)
         ->get(route('users.advisees', $lecturer))
@@ -58,10 +58,10 @@ it('allows administrators to create lecturers and map active students', function
 
 it('rejects mapping non-active or non-student accounts to an advisor', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $lecturer = User::factory()->create(['role' => 'dosen']);
+    $lecturer = User::factory()->create(['role' => 'dosen_pa']);
     $inactiveStudent = User::factory()->create([
         'role' => 'mahasiswa',
-        'academic_status' => 'alumni',
+        'academic_status' => 'lulus',
     ]);
 
     $this->actingAs($admin)
@@ -75,7 +75,7 @@ it('rejects mapping non-active or non-student accounts to an advisor', function 
 
 it('restricts user management to administrators and lecturer records', function () {
     $student = User::factory()->create(['role' => 'mahasiswa']);
-    $lecturer = User::factory()->create(['role' => 'dosen']);
+    $lecturer = User::factory()->create(['role' => 'dosen_pa']);
 
     $this->actingAs($student)
         ->get(route('users.index'))

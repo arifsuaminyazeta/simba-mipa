@@ -61,6 +61,7 @@
             </nav>
 
         @elseif($role === 'dosen_pa')
+            <!-- MENU DOSEN PA -->
             <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Portal Pembimbing Akademik</p>
             <nav class="space-y-1">
                 <a href="{{ route('dashboard.dosen') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('dashboard.dosen') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
