@@ -15,8 +15,8 @@
 </head>
 <body class="font-sans antialiased bg-[#f8fafc] text-slate-900 selection:bg-blue-100 selection:text-blue-700 flex flex-col min-h-screen">
 
-    <div class="bg-blue-700 text-white text-[11px] font-medium py-2 px-6 lg:px-12">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+    <div class="bg-blue-700 text-white text-[11px] font-medium py-2 px-4 sm:px-6">
+        <div class="w-full flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-300"></span>
                 <span>Fakultas Matematika dan Ilmu Pengetahuan Alam · Universitas Lampung</span>
@@ -83,11 +83,6 @@
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>&copy; {{ date('Y') }} SIMBA-MIPA FMIPA Unila. Hak cipta dilindungi.</p>
-            <div class="flex items-center gap-4 text-slate-400">
-                <span class="hover:text-blue-600 cursor-pointer">Panduan Beasiswa</span>
-                <span>·</span>
-                <span class="hover:text-blue-600 cursor-pointer">Kontak Subbag</span>
-            </div>
         </div>
     </footer>
 

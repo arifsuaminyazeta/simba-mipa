@@ -42,38 +42,37 @@
             @endif
 
             <!-- Filter Bar -->
-            <form method="GET" action="{{ $catalogAction }}" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 grid grid-cols-1 md:grid-cols-12 gap-3">
-                <div class="md:col-span-7 relative">
+            <form id="catalog-filter-form" method="GET" action="{{ $catalogAction }}" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;" class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                <div style="flex: 1 1 280px; min-width: 0;" class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </span>
                     <input type="text" name="search" value="{{ $filters['search'] ?? request('search') }}"
                            placeholder="Cari nama beasiswa atau mitra penyelenggara..."
+                           style="width: 100%;"
                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-800 placeholder-slate-400">
                 </div>
-                <div class="md:col-span-3">
-                    <select name="status" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-700">
+                <div style="flex: 0 0 180px;">
+                    <select name="status" style="width: 100%;" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-slate-700">
                         <option value="">Semua Status</option>
                         <option value="open" @selected(($filters['status'] ?? request('status')) === 'open')>Dibuka</option>
                         <option value="closed" @selected(($filters['status'] ?? request('status')) === 'closed')>Ditutup</option>
                     </select>
                 </div>
-                <div class="md:col-span-2 flex gap-2">
-                    <button type="submit" class="flex-1 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors">
+                <div style="flex: 0 0 auto;" class="flex gap-2">
+                    <button type="submit" style="min-width: 110px;" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors">
                         Cari
                     </button>
-                    @if(request('search') || request('status'))
-                        <a href="{{ $catalogAction }}" class="px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-50">
-                            Reset
-                        </a>
-                    @endif
+                    <a id="catalog-reset-btn" href="{{ $catalogAction }}" class="{{ request('search') || request('status') ? '' : 'hidden' }} px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-50">
+                        Reset
+                    </a>
                 </div>
             </form>
         </div>
     </section>
 
     <!-- Grid Kartu Beasiswa -->
-    <section class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+    <section id="catalog-results" class="max-w-7xl mx-auto px-6 lg:px-12 py-12 transition-opacity duration-150">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($scholarships as $scholarship)
                 @php
@@ -177,4 +176,94 @@
         @endif
     </section>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('catalog-filter-form');
+        const results = document.getElementById('catalog-results');
+        const resetBtn = document.getElementById('catalog-reset-btn');
+        if (!form || !results) return;
+
+        const searchInput = form.querySelector('input[name="search"]');
+        const statusSelect = form.querySelector('select[name="status"]');
+        let timer;
+        let controller;
+
+        async function fetchCatalog(url) {
+            if (controller) controller.abort();
+            controller = new AbortController();
+            results.style.opacity = '0.5';
+
+            try {
+                const res = await fetch(url, {
+                    signal: controller.signal,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const html = await res.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const nextResults = doc.getElementById('catalog-results');
+
+                if (nextResults) {
+                    results.innerHTML = nextResults.innerHTML;
+                    window.history.replaceState({}, '', url);
+                }
+            } catch (err) {
+                if (err.name !== 'AbortError') console.error(err);
+            } finally {
+                results.style.opacity = '1';
+            }
+        }
+
+        function triggerLiveFilter() {
+            const params = new URLSearchParams();
+            const searchVal = searchInput ? searchInput.value.trim() : '';
+            const statusVal = statusSelect ? statusSelect.value : '';
+
+            if (searchVal) params.set('search', searchVal);
+            if (statusVal) params.set('status', statusVal);
+
+            if (resetBtn) {
+                resetBtn.classList.toggle('hidden', !searchVal && !statusVal);
+            }
+
+            const queryString = params.toString();
+            const url = form.action + (queryString ? '?' + queryString : '');
+            fetchCatalog(url);
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            clearTimeout(timer);
+            triggerLiveFilter();
+        });
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                clearTimeout(timer);
+                timer = setTimeout(triggerLiveFilter, 300);
+            });
+        }
+
+        if (statusSelect) {
+            statusSelect.addEventListener('change', triggerLiveFilter);
+        }
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (searchInput) searchInput.value = '';
+                if (statusSelect) statusSelect.value = '';
+                triggerLiveFilter();
+            });
+        }
+
+        results.addEventListener('click', function (e) {
+            const link = e.target.closest('nav[role="navigation"] a, .pagination a');
+            if (link && link.href) {
+                e.preventDefault();
+                fetchCatalog(link.href);
+            }
+        });
+    });
+</script>
 @endsection
